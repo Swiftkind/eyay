@@ -23,7 +23,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^users/', include('users.urls', namespace="users")),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     url(r'^rest-auth/facebook', FacebookLogin.as_view(), name='fb_login'),
-    url(r'^rest-auth/google', GoogleLogin.as_view(), name='google_login')
+    url(r'^rest-auth/google', GoogleLogin.as_view(), name='google_login'),
 ]

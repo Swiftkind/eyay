@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'rest_auth.registration',
-    'rest_framework_swagger',
     # all-auth
     'allauth',
     'allauth.account',
@@ -127,6 +126,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'eyayapp@gmail.com'
 EMAIL_HOST_PASSWORD = '@swiftkind'
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
