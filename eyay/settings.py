@@ -133,6 +133,12 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
+# rest-auth settings
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserDetailsSerializer',
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
