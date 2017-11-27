@@ -17,7 +17,6 @@ from .serializers import BotDetailsSerializer, BotKnowledgeSerializer
 from .permissions import IsOwnerOrAdmin
 
 
-
 class BotListCreateView(ListCreateAPIView):
     queryset = Bot.objects.all()
     permission_classes = (IsAuthenticated,)
