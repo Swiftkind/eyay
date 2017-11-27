@@ -7,20 +7,16 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Bot(models.Model):
-    AUTOMOTIVE = 'AU'
-    CLOTHING = 'CL'
-    SOFTWARE = 'SO'
     CATEGORY_CHOICES = (
-        (AUTOMOTIVE, 'Automotive'),
-        (CLOTHING, 'Clothing'),
-        (SOFTWARE, 'Software')
+        (1, 'Automotive'),
+        (2, 'Clothing'),
+        (3, 'Software')
     )
 
     name = models.CharField(max_length=50)
-    category = models.CharField(
-        max_length=2,
+    category = models.IntegerField(
         choices=CATEGORY_CHOICES,
-        default=AUTOMOTIVE,
+        default=1,
     )
     is_active = models.BooleanField(default=True)
     tags = models.CharField(
@@ -29,6 +25,7 @@ class Bot(models.Model):
         null=True,
         help_text='Separate tags with commas. Ex: python,django,flask'
     )
+    created = models.DateField(auto_now=True)
     creator = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
