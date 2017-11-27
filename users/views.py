@@ -12,7 +12,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.base import TemplateView
 
 
-
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
@@ -25,11 +24,11 @@ class UserProfileViewSet(ViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserDetailsSerializer
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         serializer = UserDetailsSerializer(self.request.user)
-        return Response(serializer.data, status=HTTP_200_OK)
+        return Response(serializer.data)
 
-    def update(self, request):
+    def update(self, request, *args, **kwargs):
         serializer = UserDetailsSerializer(self.request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
