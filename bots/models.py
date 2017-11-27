@@ -9,10 +9,7 @@ User = get_user_model()
 class Bot(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    category = models.CharField(
-        max_length=50,
-        blank=False
-    )
+    category = models.CharField(max_length=50, blank=False)
     is_active = models.BooleanField(default=True)
     tags = models.CharField(
         max_length=100,
@@ -32,17 +29,9 @@ class Bot(models.Model):
 
 
 class Knowledge(models.Model):
-    bot = models.ForeignKey(
-        Bot,
-        on_delete=models.CASCADE
-    )
-    statement = models.CharField(
-        max_length=100,
-        blank=False
-    )
-    answer = models.TextField(
-        blank=False
-    )
+    bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
+    statement = models.CharField(max_length=100, blank=False)
+    answer = models.TextField(blank=False)
 
     def __str__(self):
         return '{} bot knowledge'.format(self.bot)
