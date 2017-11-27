@@ -9,8 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 from .serializers import UserDetailsSerializer
 
-User = get_user_model()
-
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
