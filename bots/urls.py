@@ -1,10 +1,9 @@
 from django.conf.urls import url
-from rest_framework import routers
 
-from .views import BotViewSet
+from .views import BotListCreateView, BotRetrieveUpdateDestroyView
 
 
-router = routers.SimpleRouter()
-router.register(r'api/bots', BotViewSet)
-
-urlpatterns = router.urls
+urlpatterns = [
+    url(r'^api/bots/$', BotListCreateView.as_view(), name='bots-api'),
+    url(r'^api/bots/(?P<pk>[0-9]+)/$', BotRetrieveUpdateDestroyView.as_view(), name='bot-detail')
+]
