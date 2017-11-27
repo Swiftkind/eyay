@@ -24,11 +24,11 @@ class UserProfileViewSet(ViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserDetailsSerializer
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         serializer = UserDetailsSerializer(self.request.user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=HTTP_200_OK)
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request):
         serializer = UserDetailsSerializer(self.request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
