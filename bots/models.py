@@ -7,16 +7,11 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Bot(models.Model):
-    CATEGORY_CHOICES = (
-        (1, 'Automotive'),
-        (2, 'Clothing'),
-        (3, 'Software')
-    )
-
     name = models.CharField(max_length=50)
-    category = models.IntegerField(
-        choices=CATEGORY_CHOICES,
-        default=1,
+    description = models.TextField(blank=True)
+    category = models.CharField(
+        max_length=50,
+        blank=False
     )
     is_active = models.BooleanField(default=True)
     tags = models.CharField(
@@ -34,3 +29,20 @@ class Bot(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Knowledge(models.Model):
+    bot = models.ForeignKey(
+        Bot,
+        on_delete=models.CASCADE
+    )
+    statement = models.CharField(
+        max_length=100,
+        blank=False
+    )
+    answer = models.TextField(
+        blank=False
+    )
+
+    def __str__(self):
+        return '{} bot knowledge'.format(self.bot)
