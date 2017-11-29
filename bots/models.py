@@ -11,6 +11,7 @@ class Bot(models.Model):
     description = models.TextField(blank=True)
     category = models.CharField(max_length=50, blank=False)
     is_active = models.BooleanField(default=True)
+    is_archived = models.BooleanField(default=False)
     tags = models.CharField(
         max_length=100,
         blank=True,
