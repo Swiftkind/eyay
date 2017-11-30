@@ -9,7 +9,7 @@ User = get_user_model()
 class Bot(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    category = models.CharField(max_length=50, blank=False)
+    category = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     is_archived = models.BooleanField(default=False)
     tags = models.CharField(
