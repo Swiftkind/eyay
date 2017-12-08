@@ -86,7 +86,7 @@ class ChatBot(APIView):
                 status=HTTP_400_BAD_REQUEST)
         
         bot_knowledge = Knowledge.objects.filter(
-            bot=self.kwargs['pk']).values_list('statement', 'answer')
+            bot=self.kwargs['pk']).order_by('id').values_list('statement', 'answer')
         
         # separate statements and answers from bot knowledge
         statements = []
@@ -95,17 +95,16 @@ class ChatBot(APIView):
             statements.append(line[0])
             answers.append(line[1])
 
-        # For lines 133 to 137:
         # We create vectors for contextual comparison, using parse_text()
         # this uses spaCy's english corpus, then comparison 
         # will use spaCy's similarity().
         
         # We then lemmatize vectors for non-contextual comparison
         # which can be derived from the vectors, then comparison 
-        # will use levenshtein algorithm
+        # will use fuzzy matching and levenshtein algorithm
         statement_vectors = [parse_text(clean_text(statement)) for statement in statements]
-        lemmatized_vectors = [' '.join([tok.lemma_ for tok in st_vector if tok.lemma_ != '-PRON-']) 
-                                    for st_vector in statement_vectors]
+        lemmatized_vectors = [' '.join([tok.lemma_ for tok in st_vector 
+                                if tok.lemma_ != '-PRON-'])  for st_vector in statement_vectors]
         message = parse_text(clean_text(message))
         lemmatized_input = ' '.join([tok.lemma_ for tok in message if tok.lemma_ != '-PRON-'])
 
@@ -123,29 +122,20 @@ class ChatBot(APIView):
         bot_response = {'response': 0, 'confidence': 0.0} 
         for index, score in enumerate(vector_and_edist):
             avg_score = (score[0]+score[1])/2.0
-            print(score[0], score[1])
-            if avg_score > bot_response['confidence']:
-                bot_response['response'] = index
-                bot_response['confidence'] = avg_score
-            if avg_score == 1:
-                bot_response['response'] = index
-                bot_response['confidence'] = avg_score
-                break
-            if score[0] >= 0.70:
-                bot_response['response'] = index
-                bot_response['confidence'] = score[0]
-                break
-            if score[1] >= 0.75:
-                bot_response['response'] = index
-                bot_response['confidence'] = score[1]
-                break
 
-        print(bot_response)
+            if avg_score > bot_response['confidence']:
+                bot_response = {'response': index, 'confidence': avg_score}        
+
+            if avg_score == 1:
+                break        
+
         if bot_response['confidence'] < 0.65:
             return Response(json.dumps({'response': 'I dont know a good answer for that, \
-                teach me by entering the proper answer to the question/query above.'})
+            teach me by entering the proper answer to the question/query above.'})
             , status=HTTP_200_OK)
         else:
-            bot_response['response'] = answers[bot_response['response']]
-            bot_response['confidence'] = round(bot_response['confidence'] * 100, 2)
+            bot_response = {
+                'response': answers[bot_response['response']], 
+                'confidence': round(bot_response['confidence'] * 100, 2)
+            } 
             return Response(json.dumps(bot_response), status=HTTP_200_OK)

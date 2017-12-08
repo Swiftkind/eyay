@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.mail import send_mail
+from django.db.models.signals import post_save
 from django.contrib.auth.models import (
     AbstractBaseUser, 
     BaseUserManager, 
@@ -7,6 +8,8 @@ from django.contrib.auth.models import (
     )
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from allauth.account.utils import sync_user_email_addresses
+from allauth.account.models import EmailAddress
 
 
 class UserManager(BaseUserManager):
@@ -69,3 +72,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+def change_email(sender, instance, created, **kwargs):
+    if not created:
+        sync_user_email_addresses(instance)
+        EmailAddress.objects.filter(user=instance).first().delete()
+
+post_save.connect(change_email, sender=User)
