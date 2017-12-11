@@ -1,0 +1,129 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <div class="col-md-offset-1">
+          <h1 class="title">Collections</h1>
+          <p class="total-bots">{{ total_bots }} total bots</p>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-2">
+        <a href="{% url 'addbot' %}" class="btn btn-primary new_bot-btn ">New Bot</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <div class="col-md-offset-1">
+          <h5 class="information-header">Summary</h5><br>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="col-xs-12 col-md-10 col-md-offset-1">
+        <div class="header-separator">
+          <div class="row ">
+            <div class="col-xs-12 col-md-3 ">
+              <div class="col-xs-6 col-md-6">
+                <img src="{% static 'images/bots/bot.png' %}" srcset="{% static 'images/bots/bot@2x.png' %} 2x, {% static 'images/bots/bot@3x.png' %} 3x" class="summary-img">
+              </div>
+              <div class="col-xs-6">
+                <span class="summary-number">{{ total_bots }}</span>
+                <div class="summary-label">Total Bots</div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-3 col-md-offset-1">
+              <div class="col-xs-6 col-md-6">
+                <img src="{% static 'images/bots/active-bot.png' %}" srcset="{% static 'images/bots/active-bot@2x.png' %} 2x, {% static 'images/bots/active-bot@3x.png' %} 3x" class="summary-img">
+              </div>
+              <div class="col-xs-6">  
+                <span class="summary-number">{{ active_bots }}</span>
+                <div class="summary-label">Active Bots</div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-3 col-md-offset-1">
+              <div class="col-xs-6 col-md-6">
+                <img src="{% static 'images/bots/language.png' %}" srcset="{% static 'images/bots/language@2x.png' %} 2x, {% static 'images/bots/language@3x.png' %} 3x" class="summary-img">
+              </div>
+              <div class="col-xs-6">
+                <span class="summary-number">6</span>
+                <div class="summary-label">Languages</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <nav class="navbar">
+     <ul class="nav navbar-nav right-nav ">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle filters-custom " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">All Time &nbsp;<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Last Week</a></li>
+          <li><a href="#">Last Month</a></li>
+          <li><a href="#">All Time</a></li>
+        </ul>
+      </li>
+      <li><button href="#" class="filters-custom button-active"><div class="active-circle"></div> &nbsp;Active</button></li>
+      <li><a href="#" class="filters-custom "><div class="inactive-circle "></div> &nbsp;Inactive</a></li>
+    </ul>
+    <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+      {% if bots.has_previous %}
+      <li><a href="/?page=first" class="font-color">First</a></li>
+      <li><a href="/?page={{ bots.previous_page_number }}">{{ bots.previous_page_number }}</a></li>
+      {% endif %}
+      <li class="active"><a>{{ page }}</a></li>
+      {% if bots.has_next %}
+      <li><a href="/?page={{ bots.next_page_number }}">{{ bots.next_page_number }}</a></li>
+      <li><a href="/?page=last">Last</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+
+<div class="container">
+  <div class="row">
+    {% for bot in bots %}
+    <div class="col-xs-12 col-md-6">
+      <div class="panel panel-body bot-card">
+        <div>
+          <a href="{% url 'botdetails' bot.id %}" class="bot-name">{{ bot.name }}</a> 
+          <div class="status-option-container">            
+            <input {% if bot.is_active %}checked{% endif %} type="checkbox" data-toggle="toggle" data-on="active" data-off="inactive" data-onstyle="success" data-offstyle="danger" data-width="70px"data-size="mini">
+            <div class="btn-group">
+              <span class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class=" glyphicon glyphicon-option-horizontal "></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'chat' bot.id %}">Chat</a></li>
+                  <li><a href="{% url 'botdetails' bot.id %}">Edit</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#" onclick="archiveBot({{ bot.id }});return false;">Archive</a></li>
+                </ul>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body bot-desc">
+          <p>{{ bot.description|truncatechars:200 }}</p>
+          <span class="date-created-footer">Date Created</span>
+          <div><strong>{{ bot.created|date:"m/d/Y" }}</strong></div>
+        </div>   
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

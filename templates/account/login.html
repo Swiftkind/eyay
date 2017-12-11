@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Sign In{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <h1 class="title">Sign In</h1>
+        <p class="total-bots">Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a Bot Pro account.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <div class="panel row form-panel">
+      <div class="col-xs-12 col-md-6">
+        <a class="btn btn-fb" href="/accounts/facebook/login?process=login"><i class="fa fa-facebook"></i> Facebook</a>
+        <a class="btn btn-google" href="/accounts/google/login?process=login"><i class="fa fa-google"></i> Google+</a>
+        <hr>
+
+        <form method="POST" action="{% url 'account_login' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_login">Email address</label>
+            <input type="email" name="login" class="form-control" id="id_login" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label for="id_password">Password</label>
+            <input type="password" name="password" class="form-control" id="id_password" placeholder="Password">
+            <small><a href="#">Forgot Password?</a></small>
+          </div>
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <button type="submit" class="btn btn-primary">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

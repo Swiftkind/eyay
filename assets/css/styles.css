@@ -1,0 +1,460 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800");
+@font-face {
+  font-family: 'Montserrat-Bold';
+  src: url("../fonts/Montserrat/Montserrat-Bold.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  font-family: 'Montserrat-Light';
+  src: url("../fonts/Montserrat/Montserrat-Light.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  font-family: 'Montserrat-LightItalic';
+  src: url("../fonts/Montserrat/Montserrat-LightItalic.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  font-family: 'Montserrat-Medium';
+  src: url("../fonts/Montserrat/Montserrat-Medium.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  font-family: 'Montserrat-Regular';
+  src: url("../fonts/Montserrat/Montserrat-Regular.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  font-family: 'Montserrat-SemiBold';
+  src: url("../fonts/Montserrat/Montserrat-SemiBold.otf");
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+@font-face {
+  family: 'OpenSans-Bold';
+  src: url(../fonts/OpenSans-Bold.ttf); }
+@font-face {
+  family: 'OpenSans-BoldItalic';
+  src: url(../fonts/OpenSans-BoldItalic.ttf); }
+@font-face {
+  family: 'OpenSans-ExtraBold';
+  src: url(../fonts/OpenSans-ExtraBold.ttf); }
+@font-face {
+  family: 'OpenSans-ExtraBoldItalic';
+  src: url(../fonts/OpenSans-ExtraBoldItalic.ttf); }
+@font-face {
+  family: 'OpenSans-Italic';
+  src: url(../fonts/OpenSans-Italic.ttf); }
+@font-face {
+  family: 'OpenSans-Light';
+  src: url(../fonts/OpenSans-Light.ttf); }
+@font-face {
+  family: 'OpenSans-LightItalic';
+  src: url(../fonts/OpenSans-LightItalic.ttf); }
+@font-face {
+  family: 'OpenSans-Regular';
+  src: url(../fonts/OpenSans-Regular.ttf); }
+@font-face {
+  family: 'OpenSans-Semibold';
+  src: url(../fonts/OpenSans-Semibold.ttf); }
+@font-face {
+  family: 'OpenSans-SemiboldItalic';
+  src: url(../fonts/OpenSans-SemiboldItalic.ttf); }
+body {
+  padding-top: 50px;
+  background: #efeff7; }
+
+/* Navbar Custom */
+.custom-navbar {
+  background-color: #fff;
+  border: solid 1px #e4e4ea; }
+  .custom-navbar .icon-bar-color {
+    background-color: #94989f; }
+  .custom-navbar .navbar-web-name {
+    float: left;
+    padding: 15px 15px;
+    font-family: "Montserrat-Bold";
+    font-size: 20px;
+    line-height: 20px; }
+  .custom-navbar .user-panel {
+    font-family: Montserrat-Regular;
+    font-size: 16px;
+    text-align: left;
+    color: #94989f; }
+
+/* Custom Content Bot Details | Add Bot */
+.content-margin {
+  padding-top: 70px;
+  background-color: #efeff7; }
+
+/* Custom Pagination Bot Details | Dash Board */
+.pagination-style li a {
+  background-color: transparent;
+  border: none; }
+
+/* Custom Header for Chat | Bot Details */
+.collections {
+  padding-bottom: 25px;
+  background-color: #fff; }
+
+/* Header Custom */
+.title {
+  font-family: "Montserrat-SemiBold";
+  font-size: 30px;
+  margin-top: 30px;
+  letter-spacing: .3px;
+  color: #636c80; }
+
+.total-bots {
+  font-family: "Montserrat-Regular";
+  font-size: 16px;
+  color: #bcbec4;
+  line-height: 2.25; }
+
+.new_bot-btn {
+  /* button-text */
+  font-family: "Montserrat-Regular";
+  font-size: 16px;
+  letter-spacing: .2px;
+  /* button */
+  background-color: #0984ff;
+  padding: 10px 50px;
+  margin: 30px 0;
+  border: transparent; }
+
+.information-header {
+  font-family: "Montserrat-Bold";
+  font-size: 18px;
+  letter-spacing: .2px;
+  margin-left: inherit;
+  color: #636c80; }
+
+.header-separator {
+  border-top: solid 1px #f3f4f5;
+  padding-top: 15px;
+  margin-left: 25px; }
+
+.summary-img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain; }
+
+.summary-number {
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  line-height: 2;
+  letter-spacing: .2px;
+  color: #636c80; }
+
+.summary-label {
+  font-family: "Montserrat-SemiBold";
+  font-size: 14px;
+  line-height: 100%;
+  color: #94989f; }
+
+/* Filters */
+.filters-custom {
+  border: transparent;
+  font-family: "Montserrat-Regular";
+  font-size: 14.2px;
+  text-align: left;
+  color: #94989f; }
+
+.button-active {
+  margin: 15px;
+  background-color: #e4e4eb;
+  border: solid 1px #dedee2; }
+
+.active-circle {
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50px;
+  background-color: #3cf0a6;
+  display: inline-flex; }
+
+.inactive-circle {
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50px;
+  background-color: #f53458;
+  display: inline-flex; }
+
+/* Content  Custom*/
+.content {
+  padding-top: 50px;
+  background-color: transparent; }
+  .content .bot-card {
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0px 1px 7.8px 0.2px rgba(0, 0, 0, 0.04);
+    min-height: 225px; }
+    .content .bot-card .bot-name {
+      font-family: "Montserrat-SemiBold";
+      font-size: 13.9px;
+      line-height: 1.71;
+      color: #636c80; }
+    .content .bot-card .status-option-container {
+      float: right; }
+    .content .bot-card .bot-desc {
+      font-family: "OpenSans-Regular";
+      font-size: 14px;
+      color: #94989f; }
+
+.form-panel {
+  padding: 50px 50px;
+  font-family: "Montserrat-Regular"; }
+
+.btn-social, .btn-fb, .btn-google {
+  margin-top: 15px;
+  width: 200px;
+  color: #fff; }
+
+.btn-fb {
+  background-color: #3b5998; }
+
+.btn-google {
+  background-color: #d34836; }
+
+.chat-input {
+  padding-top: 25px; }
+
+.chat-name {
+  font-family: Montserrat-Bold; }
+
+.chat-messages {
+  height: 300px;
+  overflow-y: auto; }
+
+.user {
+  color: #0984ff; }
+
+.collection-custom {
+  background-color: #fff;
+  height: 300px; }
+  .collection-custom .collection-align-center {
+    margin: auto;
+    text-align: center; }
+
+.chat-bot-img {
+  max-width: 100%;
+  max-height: auto;
+  width: 100px;
+  height: 100px;
+  /* Position */
+  margin-top: 20px; }
+
+.text-content {
+  margin: auto;
+  text-align: center; }
+
+/* Header of Bot Details*/
+.bot-description {
+  font-family: "Montserrat-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  letter-spacing: .1px;
+  color: #94989f; }
+
+.bot-detail-content {
+  margin-bottom: 40px;
+}
+
+.header-divider {
+  border-top: solid 1px #f3f4f5;
+  padding-top: 15px;
+  margin-left: 75px; }
+
+.sign span {
+  color: #0984ff; }
+
+/* Content */
+.text-question {
+  /* Text Design*/
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  line-height: 2;
+  letter-spacing: .2px;
+  color: #636c80;
+  /* Text Position */
+  margin-top: 64px;
+  margin-bottom: 20px; }
+
+.knowledge-container {
+  border: 1px solid #e4e4ea;
+  border-radius: 2px;
+  box-shadow: 0px 1px 7.8px 0.2px rgba(0, 0, 0, 0.04);
+  margin-top: 5px;
+  min-height: 250px; }
+
+.question-icon {
+  font-family: "Montserrat-SemiBold";
+  font-size: 24.1px;
+  line-height: 1.33;
+  color: #3cf0a6;
+  border-right: solid 1px #e4e4ea;
+  /* icon position */
+  padding-right: 10px; }
+
+.question {
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  color: #636c80; }
+
+.answer-word {
+  font-family: "Montserrat-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  color: #d7dbe6;
+  /* position */
+  padding-top: 21px; }
+
+.answer {
+  font-family: "OpenSans-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  letter-spacing: .4px;
+  color: #94989f;
+  padding-top: 12px;
+  margin-left: 37px; }
+
+.bot-details-footer {
+  min-height: 358px;
+  border-top: solid 1px #efeff7;
+  width: 100%; }
+
+.knowledge-header {
+  height: auto;
+  border-bottom: solid 1px #efeff7; }
+
+.Add-Queries {
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  line-height: 2;
+  letter-spacing: .2px;
+  color: #636c80;
+  padding-top: 10px; }
+
+.query-label {
+  font-family: "Montserrat-SemiBold";
+  font-size: 14px;
+  line-height: 1.71;
+  color: #636c80;
+  margin-top: 15px; }
+
+input[type=text] {
+  margin-top: 20px;
+  border-bottom: solid 1px #efeff7;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  width: 100%; }
+
+.save-query {
+  /* Text Content */
+  font-family: "Montserrat-Regular";
+  font-size: 16px;
+  line-height: 2.25;
+  letter-spacing: .2px;
+  color: #fff;
+  /* Button Design */
+  background-color: #0984ff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 50px;
+  /* Button Position */
+  float: right;
+  margin-top: 50px; }
+
+.edit-link {
+  color: #94989f;
+  font-family: "Montserrat-Regular";
+  font-size: 12px;
+  padding-left: 10px; }
+
+.symbols {
+  color: #0984ff;
+  padding: 5px; }
+
+/* Custom Header for New Bot Page */
+.collection-height {
+  background-color: #fff;
+  height: 540px; }
+  .collection-height .center {
+    margin: auto;
+    text-align: center; }
+    .collection-height .center .bot-img {
+      padding: 100px 0 25px 0; }
+    .collection-height .center .greeting {
+      font-family: "Montserrat-SemiBold";
+      font-size: 36px;
+      line-height: 1;
+      letter-spacing: 0.4px;
+      color: #636c80;
+      margin: auto; }
+    .collection-height .center .lets-get-started {
+      font-family: Montserrat-Light;
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1.5;
+      letter-spacing: 0.2px;
+      color: #94989f;
+      margin-top: 25px; }
+
+.add-cotent {
+  height: 838px; }
+  .add-cotent .bot-header {
+    margin-top: 75px;
+    margin-left: 45px; }
+    .add-cotent .bot-header .bot-details {
+      font-family: "Montserrat-SemiBold";
+      font-size: 18px;
+      line-height: 2;
+      letter-spacing: .2px;
+      color: #636c80; }
+    .add-cotent .bot-header .info-sign {
+      color: #0984ff;
+      padding: 10px 10px; }
+  .add-cotent .custom-form {
+    margin: 25px 30px; }
+    .add-cotent .custom-form .custom-questions {
+      font-family: "Montserrat-Regular";
+      color: #636c80;
+      line-height: 1.71;
+      margin-top: 50px; }
+    .add-cotent .custom-form input[type=text] {
+      margin-top: 44px;
+      border-bottom: solid 1px #efeff7;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      width: 100%; }
+    .add-cotent .custom-form .done-btn {
+      /* Text Content */
+      font-family: "Montserrat-Regular";
+      font-size: 16px;
+      line-height: 2.25;
+      letter-spacing: .2px;
+      color: #fff;
+      /* Button Design */
+      background-color: #0984ff;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 50px;
+      /* Button Position */
+      float: right;
+      margin-top: 120px; }
+
+/*# sourceMappingURL=styles.css.map */

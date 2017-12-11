@@ -1,0 +1,42 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+{% block title %}Chatting with {{ bot.name }}{% endblock %}
+
+{% block header %}
+<div class="collection-custom">
+  <div class="container">
+    <div class="row">
+      <div class="collection-align-center">
+        <br><br>
+        <img src="{% static 'images/bots/bot-pic.png' %}" class="chat-bot-img">
+        <div class="row >
+          <div class="col-xs-12 col-md-10">
+            <h1 class="title text-content"">{{ bot.name }}</h1>
+            <p class="total-bots text-content"">You are currently talking to {{ bot.name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %} 
+<div class="content ">
+  <div class="container">
+    <div class="panel row form-panel">
+      <div class="col-xs-12 chat-messages" id="chat-messages">
+        <p><span class="chat-name">{{ bot.name }}:</span> Hey there</p>
+      </div>
+
+      <div class="col-xs-12 col-md-11 chat-input">
+        <input type="text" name="message" class="form-control input-message" max_length="100" id="id_message" placeholder="Your message goes here">
+      </div>
+      <div class="col-xs-12 col-md-1 chat-input">
+        <button type="submit" class="btn btn-primary submit-message">Submit</button>
+        <br><br>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

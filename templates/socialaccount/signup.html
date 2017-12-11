@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <h1 class="title">Sign Up</h1>
+        <p class="total-bots">{% with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form{% endwith %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <div class="panel row form-panel">
+      <ul>
+        {% for message in message %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      <div class="col-xs-12 col-md-6">
+        <ul class="error-text">
+          {{ form.non_field_errors }}
+        </ul>
+        {% for message in messages %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+        {% endfor %}
+
+        <form method="POST" action="{% url 'socialaccount_signup' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_email">Email address</label>
+            <small class="error-text">{{ form.email.errors }}</small>
+            <input type="email" name="email" class="form-control" id="id_email" placeholder="Your email address" value="{{ form.email.value }}">
+          </div>
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
