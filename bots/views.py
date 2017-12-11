@@ -1,12 +1,25 @@
+from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.shortcuts import get_object_or_404
-
+from django.core.paginator import (
+    Paginator, 
+    EmptyPage, 
+    PageNotAnInteger
+    )
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView
+    )
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_400_BAD_REQUEST
+    HTTP_400_BAD_REQUEST,
+    HTTP_500_INTERNAL_SERVER_ERROR
     )
 import json
 
@@ -15,7 +28,7 @@ from .serializers import (
     BotDetailsSerializer, 
     ArchivedBotSerializer,
     BotKnowledgeSerializer
-    ) 
+    )
 from .permissions import IsOwner
 from .utils import parse_text, clean_text, str_similarity
 
@@ -28,7 +41,7 @@ class BotViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == 'list':
             self.permission_classes = []
-        return super(self.__class__, self).get_permissions() 
+        return super(self.__class__, self).get_permissions()
 
     def perform_create(self, serializer):
         serializer.save(is_active=True)
@@ -51,7 +64,7 @@ class KnowledgeViewSet(ModelViewSet):
     serializer_class = BotKnowledgeSerializer
 
     def get_queryset(self):
-        return Knowledge.objects.filter(bot=self.kwargs['bot'])
+        return Knowledge.objects.filter(bot=self.kwargs['bot']).order_by('id')
 
     def get_permissions(self):
         if self.action == 'create':
@@ -127,3 +140,67 @@ class ChatBot(APIView):
                 'confidence': round(bot_response['confidence'] * 100, 2)
             } 
             return Response(json.dumps(bot_response), status=HTTP_200_OK)
+
+
+class ChatBotAppView(TemplateView):
+    template_name = "bot/chat.html"
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bot'] = get_object_or_404(Bot, pk=self.kwargs['pk'])
+        return context
+
+
+class IndexView(TemplateView):
+    template_name = 'bot/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            queryset = Bot.objects.filter(creator=self.request.user,
+             is_archived=False).order_by('-id', '-created')
+            paginator = Paginator(queryset, 4)
+            page = self.request.GET.get('page')
+
+            try:
+                bots = paginator.page(page)
+            except PageNotAnInteger:
+                if page == 'first':
+                    bots = paginator.page(1)
+                    page = 1
+                elif page == 'last':
+                    bots = paginator.page(paginator.num_pages)
+                    page = paginator.num_pages
+                else:
+                    bots = paginator.page(1)
+            except EmptyPage:
+                bots = paginator.page(paginator.num_pages)
+                
+            page_numbers = [x for x in range(1, bots.paginator.num_pages+1)]
+
+            context['bots'] = bots
+            context['total_bots'] = queryset.count()
+            context['active_bots'] = queryset.filter(is_active=True).count()
+            context['page_numbers'] = page_numbers
+            context['page'] = page if page else 1
+        return context
+
+
+class AddChatBotView(TemplateView):
+    template_name = "bot/addbot.html"
+
+
+class BotDetailView(DetailView):
+    model = Bot
+    template_name = 'bot/botdetails.html'
+
+    def get_context_data(self,**kwargs):
+        knowledge = Knowledge.objects.filter(bot=self.kwargs['pk']).order_by('id')
+        context = super().get_context_data(**kwargs)
+        if knowledge.exists():
+            context['bot_knowledge'] = knowledge
+            context['bot'] = get_object_or_404(Bot, pk=self.kwargs['pk'])
+        else:
+            pass
+            
+        return context
