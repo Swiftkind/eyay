@@ -1,9 +1,7 @@
-from rest_framework.generics import (
-    ListAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
-    )
+from django.shortcuts import get_object_or_404
+
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import (
@@ -18,64 +16,53 @@ from .serializers import (
     ArchivedBotSerializer,
     BotKnowledgeSerializer
     ) 
-from .permissions import IsOwnerOrAdmin
+from .permissions import IsOwner
 from .utils import parse_text, clean_text, str_similarity
 
 
-class BotListCreateView(ListCreateAPIView):
+class BotViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsOwner)
     serializer_class = BotDetailsSerializer
-    permission_classes = (IsAuthenticated,)
+    queryset = Bot.objects.filter(is_archived=False)
 
-    def get_queryset(self):
-        return Bot.objects.filter(is_archived=False, creator=self.request.user)
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permission_classes = []
+        return super(self.__class__, self).get_permissions() 
 
     def perform_create(self, serializer):
-        serializer.save(is_active=True, creator=self.request.user)
+        serializer.save(is_active=True)
 
-
-class BotRUDView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
-    serializer_class = BotDetailsSerializer
-
-    def get_queryset(self):
-        return Bot.objects.filter(is_archived=False, creator=self.request.user)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def perform_destroy(self, instance):
         instance.is_archived = True
         instance.save()
-        return Response(status=HTTP_200_OK)
 
 
-class ArchiveListView(ListAPIView):
+class ArchiveViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsOwner)
     serializer_class = ArchivedBotSerializer
 
     def get_queryset(self):
         return Bot.objects.filter(is_archived=True, creator=self.request.user)
 
 
-class ArchiveRUDView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
-    serializer_class = ArchivedBotSerializer
-
-    def get_queryset(self):
-        return Bot.objects.filter(is_archived=True, creator=self.request.user)
-
-
-class KnowledgeListCreateView(ListCreateAPIView):
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
+class KnowledgeViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated, IsOwner)
     serializer_class = BotKnowledgeSerializer
 
     def get_queryset(self):
-        return Knowledge.objects.filter(bot=self.kwargs['pk'])
+        return Knowledge.objects.filter(bot=self.kwargs['bot'])
 
+    def get_permissions(self):
+        if self.action == 'create':
+            self.permission_classes = []
+        return super(self.__class__, self).get_permissions() 
 
-class KnowledgeRUDView(RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
-    serializer_class = BotKnowledgeSerializer
-
-    def get_queryset(self):
-        return Knowledge.objects.filter(pk=self.kwargs['pk'])
+    def perform_create(self, serializer):
+        bot = get_object_or_404(Bot, pk=self.kwargs['bot'])
+        if self.request.user == bot.creator: 
+            serializer.save(bot=bot, is_accepted=True)
+        serializer.save(bot=bot)
 
 
 class ChatBot(APIView):

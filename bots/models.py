@@ -33,6 +33,7 @@ class Knowledge(models.Model):
     bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
     statement = models.CharField(max_length=100, blank=False)
     answer = models.TextField(blank=False)
+    is_accepted = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} bot knowledge'.format(self.bot)
