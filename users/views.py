@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 from .serializers import UserDetailsSerializer
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.base import TemplateView
 
 
 class FacebookLogin(SocialLoginView):
@@ -18,7 +20,7 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
 
 
-class UserProfile(ViewSet):
+class UserProfileViewSet(ViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserDetailsSerializer
 
@@ -32,3 +34,8 @@ class UserProfile(ViewSet):
             serializer.save()
             return Response(serializer.data, status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class UserProfile(LoginRequiredMixin, TemplateView):
+   template_name = 'account/profile.html'
+   login_url = '/accounts/login'

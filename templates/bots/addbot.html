@@ -1,0 +1,141 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+{% block title %} Create Bot {% endblock %}
+
+{% block header %}
+<div class="collection-height">
+  <div class="container">
+    <div class="row">
+      <div class="center">
+        <div class="bot-img">
+          <img src="{% static 'images/bots/bot-pic.png' %}">
+        </div>
+        <div class="greeting">Hello! I'm your bot assistant.</div>
+        <div class="lets-get-started">Let’s start creating your bot!</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class=" content-margin">
+  <div class="container">
+    <div class="panel row">
+      <div class="add-cotent">
+        <div class="col-md-offset-1">
+          <div class="bot-header ">
+            <span class="glyphicon glyphicon-info-sign info-sign"></span>
+            &nbsp; 
+            <span class="bot-details"> Bot Details </span>
+          </div>
+        </div>
+        <div class="col-md-11 col-sm-12">
+          <div class="col-md-offset-2 col-sm-offset-2">
+            <form class="custom-form" id="addbotForm">
+              <div class="row">
+                <div class="custom-questions">
+                  What do you want to call your bot?
+                </div> 
+                <input type="text" class="form-control" id="name" placeholder="e.g. Support Bot" autofocus required> 
+              </div>
+              <div class="row">
+                <div class="custom-questions">
+                  Please select a category for you bot: 
+                </div> 
+                <input type="text" class="form-control" id="category" placeholder="e.g. Software and Technologies" required>
+              </div>
+              <div class="row">
+                <div class="custom-questions">
+                  Describe your bot:
+                </div> 
+                <input type="text" class="form-control" id="description" placeholder="e.g. The support bot is lorem ipsum dolor amet.">
+              </div>
+              <div class="row">
+                <div class="custom-questions">
+                  Tags
+                </div> 
+                <input type="text" class="form-control" id="tags" placeholder="Tag" data-role="tagsinput"> 
+              </div>
+              <div class="row">
+                <button type="submit" class="done-btn ">
+                  Done
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script>
+  var addbotUrl = '{% url "bot-list" %}';
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = jQuery.trim(cookies[i]);
+        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  $("#addbotForm").on('submit', function(e) {
+    e.preventDefault();
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    var name = $('#name').val();
+    var description = $('#description').val();
+    var category = $('#category').val();
+    var tags = $('#tags').val();
+    var params = {
+      csrfmiddlewaretoken : csrftoken, 
+      name: "" + name, 
+      description: "" + description, 
+      category: "" + category, 
+      is_active: true, 
+      tags: "" + tags, 
+      creator: {{ request.user.id }} 
+    };
+
+    $.ajax({
+      type : 'POST',
+      url : addbotUrl,
+      data : JSON.stringify(params),
+      contentType: 'application/json',
+      success : function(json) {
+        alert('Bot was added Successfully!');
+        window.location = '/bot/' + json.id;
+      },
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText); 
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+{% block title %}Chatting with {{ bot.name }}{% endblock %}
+
+{% block header %}
+<div class="collection-custom">
+  <div class="container">
+    <div class="row">
+      <div class="collection-align-center">
+        <br><br>
+        <img src="{% static 'images/bots/bot-pic.png' %}" class="chat-bot-img">
+        <div class="row >
+          <div class="col-xs-12 col-md-10">
+            <h1 class="title text-content"">{{ bot.name }}</h1>
+            <p class="total-bots text-content"">You are currently talking to {{ bot.name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %} 
+<div class="content ">
+  <div class="container">
+    <div class="panel row form-panel">
+      <div class="col-xs-12 chat-messages" id="chat-messages">
+        <p><span class="chat-name">{{ bot.name }}:</span> Hey there</p>
+      </div>
+
+      <div class="col-xs-12 col-md-11 chat-input">
+        <input type="text" name="message" class="form-control input-message" max_length="100" id="id_message" placeholder="Your message goes here">
+      </div>
+      <div class="col-xs-12 col-md-1 chat-input">
+        <button type="submit" class="btn btn-primary submit-message">Submit</button>
+        <br><br>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  var chatterbotUrl = '/api/bots/{{ bot.id }}/chat/';
+  var botknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/';
+  var botId = '{{ bot.id }}'
+  var csrftoken = Cookies.get('csrftoken');
+  function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    }
+  });
+
+  var $chatlog = $('.chat-messages');
+  var $input = $('.input-message');
+  var $sayButton = $('.submit-message');
+  var chat_log = document.getElementById('chat-messages');
+  document.getElementById("id_message").maxLength = "100";
+
+  var needAnswer = false;
+  var prev = '';
+
+  function createRow(sender, text) {
+    if (sender == 'You')  
+      $chatlog.append('<p><span class="chat-name user">'+sender+':</span> '+text+'</p>');
+    else
+      $chatlog.append('<p><span class="chat-name">'+sender+':</span> '+text+'</p>');
+    chat_log.scrollTop = chat_log.scrollHeight;
+  } 
+
+  function submitInput() {
+    var inputData = {
+      'message': $input.val()
+    };
+    $input.val('');
+    createRow('You', inputData.message);
+
+    if (needAnswer) {
+      console.log(JSON.stringify({'statement': "" + prev, 'answer': "" + inputData.message, 'bot': botId}));
+      $.ajax({
+        type: 'POST',
+        url: botknowledgeUrl,
+        data: JSON.stringify({'statement': "" + prev, 'answer': "" + inputData.message, 'bot': botId}),
+        contentType: 'application/json',
+        success: function(response) {
+          createRow('{{ bot.name }}', 'Ok I learned that, try asking me again.');
+        },
+        error: function(err) {
+          if (err.status == 403) createRow('{{ bot.name }}', 'I\'m sorry but \
+            only my creator is allowed to teach me things.');
+        }
+      });
+      needAnswer = false;
+    } else {
+      $.ajax({
+        type: 'POST',
+        url: chatterbotUrl,
+        data: JSON.stringify(inputData),
+        contentType: 'application/json',
+        success: function(data) {
+          data = JSON.parse(data);
+          if(data.confidence == null){
+            createRow('{{ bot.name }}', '' + data.response);
+            prev = inputData.message;
+            needAnswer = true;
+          } else {
+            createRow('{{ bot.name }}', '' + data.response + ' (' +data.confidence+ '%)');
+          }
+        },
+      });
+    }
+  }
+
+  $sayButton.click(function() {
+    submitInput();
+  });
+  $input.keydown(function(event) {
+    if (event.keyCode == 13) {
+      submitInput();
+    }
+  });  
+</script>
+{% endblock %}
