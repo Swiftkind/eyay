@@ -1,0 +1,85 @@
+/* Custom Header for New Bot Page */
+
+.collection-height {
+	background-color: $white;
+	height:540px;
+	.center {
+		margin: auto;
+		text-align: center;
+		.bot-img {
+			padding: 100px 0 25px 0;
+		}
+		.greeting {
+			font-family: $Montserrat-SemiBold;
+			font-size: 36px;
+			line-height: 1;
+			letter-spacing: 0.4px;
+			color: $battleship-grey;
+			 margin:auto;	
+		}
+		.lets-get-started {
+			
+			font-family: Montserrat-Light;
+			font-size: 24px;
+			font-weight: 300;
+			line-height: 1.5;
+			letter-spacing: 0.2px;
+			color: #94989f;
+			margin-top:25px;
+		}
+	}
+
+}
+
+
+.add-cotent {
+	height:838px;
+	.bot-header {
+		margin-top: 75px;
+		margin-left: 45px;
+		.bot-details {
+			font-family: $Montserrat-SemiBold;
+			font-size: 18px;
+			line-height: 2;
+			letter-spacing: .2px;
+			color: $battleship-grey;
+		}
+		.info-sign {
+			color: $deep-sky-blue;
+			padding: 10px 10px;
+		}
+	}
+	.custom-form {
+		margin: 25px 30px;
+		.custom-questions {
+			font-family: $Montserrat-Regular;
+			color: $battleship-grey;
+			line-height: 1.71;
+			margin-top: 50px;
+		}
+		input[type=text] {
+			margin-top: 44px;
+			border-bottom: solid 1px $pale-grey;  
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			width: 100%
+		}
+		.done-btn {
+			/* Text Content */
+			font-family: $Montserrat-Regular;
+			font-size: 16px;
+			line-height: 2.25;
+			letter-spacing: .2px;
+			color: $white;
+			/* Button Design */ 
+			background-color: $deep-sky-blue;
+			border: none;
+			border-radius: 4px;
+			padding: 5px 50px;
+			/* Button Position */
+			float: right;
+			margin-top: 120px;
+		}
+	}
+}

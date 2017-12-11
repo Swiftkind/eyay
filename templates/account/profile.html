@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load account socialaccount %}
+{% block title %}{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %}{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <h1 class="title">{% if user.get_full_name %}{{ user.get_full_name }}{% else %}(No name set yet){% endif %}</h1>
+        <p class="total-bots">It's been {{ user.date_joined|timesince }} since you joined us!</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <div class="panel row form-panel">
+      <div class="col-xs-12 col-md-6">
+        <form id="userForm">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_email">Email address</label>
+            <input type="email" name="email" class="form-control" id="id_email" placeholder="Email address" value="{{ user.email }}">
+          </div>
+          <div class="form-group">
+            <label for="id_first_name">First name</label>
+            <input type="text" name="first_name" class="form-control" id="id_first_name" placeholder="First name" value="{{ user.first_name }}">
+          </div>
+          <div class="form-group">
+            <label for="id_last_name">Last name</label>
+            <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Last name" value="{{ user.last_name }}">
+          </div>
+          <button type="submit" class="btn btn-primary">Update profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  $("#userForm").submit(function(e) {
+    e.preventDefault(); 
+    var params = {
+      'email': $('#id_email').val(),
+      'first_name': $('#id_first_name').val(),
+      'last_name': $('#id_last_name').val()
+    };
+    var params_length = 3;
+    for (var key in params) {
+      if (params[key].trim().length == 0) {
+        delete params[key];
+        params_length--;
+      }
+    } 
+    var csrftoken = Cookies.get('csrftoken');
+    if (params_length > 0) {
+      $.ajax({
+        type: "PUT",
+        url: '/api/auth/user/',
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        data: params, 
+        success: function(data) {
+            alert('Sucessfully sent message'); 
+        },
+        error: function(errorMessages) {            
+            errorMessages = JSON.parse(errorMessages.responseText);
+            var errorMessage = "";
+            for (var err in errorMessages) 
+                errorMessage += errorMessages[err][0] == 'This field is required.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+            alert(errorMessage);
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

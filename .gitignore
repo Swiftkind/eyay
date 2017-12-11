@@ -3,3 +3,4 @@
 static/
 media/
 local_settings.py
+.sass-cache/

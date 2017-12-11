@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Social Accounts{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <h1 class="title">Social accounts</h1>
+        <p class="total-bots">Here you can remove or add third-party accounts that you can sign in with</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <div class="panel row form-panel">
+      <ul>
+        {% for message in message %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+
+      <div class="col-xs-12 col-md-12">
+        {% if form.accounts %}
+        <h4>You can sign in to your account using any of the following third party accounts:</h4>
+        <form method="post" action="{% url 'socialaccount_connections' %}">
+          {% csrf_token %}
+          <fieldset>
+            {% if form.non_field_errors %}
+            <div id="errorMsg">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            {% for base_account in form.accounts %}
+            {% with base_account.get_provider_account as account %}
+            <div>
+              <label for="id_account_{{ base_account.id }}">
+                <input id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}"/>
+                {% if account.get_brand.id == "google" %}<span class="btn btn-google socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}"><i class="fa fa-google">{% else %}<span class="btn btn-fb socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}"><i class="fa fa-facebook">{% endif %}</i> {{ account }}</span>
+              </label>
+            </div>
+            {% endwith %}
+            {% endfor %}
+
+            <div>
+              <br>
+              <button type="submit" class="btn btn-danger">Remove</button>
+            </div>
+
+          </fieldset>
+
+        </form>
+
+        {% else %}
+        <p>You currently have no social network accounts connected to this account.</p>
+        {% endif %}
+
+        <h2>Add a 3rd Party Account</h2>
+
+        <ul class="socialaccount_providers">
+          <a class="btn btn-fb" href="/accounts/facebook/login?process=connect"><i class="fa fa-facebook"></i> Facebook</a>
+          <a class="btn btn-google" href="/accounts/google/login?process=connect"><i class="fa fa-google"></i> Google+</a>
+        </ul>
+
+        {% include "socialaccount/snippets/login_extra.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

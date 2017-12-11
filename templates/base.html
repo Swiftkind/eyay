@@ -1,0 +1,66 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>{% block title %}{% endblock %}</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-toggle.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.css">
+    <script src="https://use.fontawesome.com/67b0e9c8df.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-fixed-top custom-navbar ">
+      <div class="container">
+       <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed " data-toggle="collapse" data-target="#user-panel" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar icon-bar-color"></span>
+          <span class="icon-bar icon-bar-color"></span>
+          <span class="icon-bar icon-bar-color"></span>
+        </button>
+        <a class="navbar-web-name" href="/">Bot Pro</a>
+      </div>
+      <div class="collapse navbar-collapse" id="user-panel">
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+          <li class="dropdown">
+            <a class="dropdown-toggle user-panel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Profile</a></li>
+              <li><a href="{% url 'account_change_password' %}">Settings</a></li>
+              <li><a href="{% url 'socialaccount_connections' %}">Social accounts</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="{% url 'account_logout' %}">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li><a href="{% url 'account_login' %}" class="user-panel">Login</a></li>
+          <li><a href="{% url 'account_signup' %}" class="user-panel">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    {% block header %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+    <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap-toggle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/js-cookie.js' %}"></script>
+    <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
+    {% block js %}{% endblock %}
+  </body>
+</html>

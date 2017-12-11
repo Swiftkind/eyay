@@ -1,0 +1,49 @@
+{% extends '../base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block header %}
+<div class="collections">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-md-10">
+        <h1 class="title">Sign Up</h1>
+        <p class="total-bots">Already have an account? Then please <a href="{% url 'account_login' %}">sign in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <div class="panel row form-panel">
+      <div class="col-xs-12 col-md-6">
+        <a class="btn btn-fb" href="/accounts/facebook/login?process=login"><i class="fa fa-facebook"></i> Facebook</a>
+        <a class="btn btn-google" href="/accounts/google/login?process=login"><i class="fa fa-google"></i> Google+</a>
+        <hr>
+
+        <form method="POST" id="signup_form" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_email">Email address</label>
+            <input type="email" name="email" class="form-control" id="id_email" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label for="id_password1">Password</label>
+            <input type="password" name="password1" class="form-control" id="id_password1" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label for="id_password2">Password (again)</label>
+            <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Password">
+          </div>
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
