@@ -35,5 +35,8 @@ class Knowledge(models.Model):
     answer = models.TextField(blank=False)
     is_accepted = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('bot', 'statement')
+
     def __str__(self):
         return '{} bot knowledge'.format(self.bot)
