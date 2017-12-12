@@ -15,7 +15,7 @@ urlpatterns = [
         ),
     url(r'^api/bots/archive/(?P<pk>[0-9]+)/$', 
         ArchiveViewSet.as_view({
-            'get': 'retrieve': 'put': 'update', 
+            'get': 'retrieve', 'put': 'update', 
             'patch': 'partial_update', 'delete': 'destroy'
             }), 
         name='bot-archive-detail'
@@ -26,7 +26,7 @@ urlpatterns = [
         ),
     url(r'^api/bots/(?P<pk>[0-9]+)/$', 
         BotViewSet.as_view({
-            'get': 'retrieve': 'put': 'update', 
+            'get': 'retrieve', 'put': 'update', 
             'patch': 'partial_update', 'delete': 'destroy'
             }), 
         name='bot-detail'
@@ -41,7 +41,7 @@ urlpatterns = [
         ),
     url(r'^api/bots/(?P<bot>[0-9]+)/knowledges/(?P<pk>[0-9]+)/$',
         KnowledgeViewSet.as_view({
-            'get': 'retrieve': 'put': 'update', 
+            'get': 'retrieve', 'put': 'update', 
             'patch': 'partial_update', 'delete': 'destroy'
             }),
         name='knowledge-detail'

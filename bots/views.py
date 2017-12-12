@@ -73,7 +73,8 @@ class ChatBot(APIView):
                 status=HTTP_400_BAD_REQUEST)
         
         bot_knowledge = Knowledge.objects.filter(
-            bot=self.kwargs['pk']).order_by('id').values_list('statement', 'answer')
+            bot=self.kwargs['pk'], 
+            is_accepted=True).order_by('id').values_list('statement', 'answer')
         
         # separate statements and answers from bot knowledge
         statements = []
