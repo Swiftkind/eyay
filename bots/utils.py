@@ -5,10 +5,6 @@ import spacy
 
 parse_text = spacy.load('en_core_web_lg')
 
-def remove_stopwords(text):
-    return ' '.join([word for word in text.split() if word not in stopwords])
-
-
 def clean_text(text):     
     text = ' '.join([word for word in text.strip().lower().split()])
     text = ''.join([ch for ch in text if ch not in string.punctuation])

@@ -127,3 +127,38 @@
   </div>
 </div>
 {% endblock %}
+
+  {% block js %}
+  <script>
+    $(function() {
+      $('#toggle-two').bootstrapToggle({
+        on: 'active',
+        off: 'inactive'
+      });
+    })
+  </script>
+
+  <script>
+    function archiveBot(bot_id){
+      var archivebotUrl = '/api/bots/' + bot_id + '/'
+      if (confirm('Are you sure you want to archive this bot?')){
+        $.ajax({
+          type: 'DELETE',
+          url: archivebotUrl,
+          contentType: 'application/json',
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+          },
+          success : function(json) {
+            alert('Bot was successfully Archived!');
+            window.location = '/';
+          },
+          error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": ");
+          }
+        });
+      }
+    }
+  </script>
+  
+  {% endblock %}

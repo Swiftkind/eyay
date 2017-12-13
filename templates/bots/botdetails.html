@@ -247,3 +247,275 @@
 
   {% endblock %}
 
+
+  {% block js %}
+  <script>
+    function editbotPopUp() {
+      var x = document.getElementById("editbotForm");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+
+
+  <script>
+    function editknowledgePopUp(knowledge_id) {
+      var x = document.getElementById("editknowledge"+ knowledge_id);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+
+
+  <script>
+    function editBot(){
+      var editbotUrl = '/api/bots/{{ bot.id }}/';
+      var botId = '{{ bot.id }}'
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      $("#editbotForm").on('submit', function(e) {
+        e.preventDefault();
+
+        var csrftoken = getCookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    var name = $('#name').val();
+    var description = $('#description').val();
+    var category = $('#category').val();
+    var tags = $('#tags').val();
+    var params = {
+      csrfmiddlewaretoken : csrftoken,
+      name: "" + name,
+      description: "" + description,
+      category: "" + category,
+      tags: "" + tags
+    };
+
+    $.ajax({
+      type : 'PUT',
+      url : editbotUrl,
+      data : JSON.stringify(params),
+      contentType: 'application/json',
+      success : function(json) {
+        alert('Bot was successfully edited!');
+        window.location = '/bots/' + botId;
+      },
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
+    }
+  </script>
+
+
+  <script>
+    function editKnowledge(knowledge_id){
+      var editknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/'+knowledge_id + '/';
+      var botId = '{{ bot.id }}'
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      $("#editknowledgeForm"+knowledge_id).on('submit', function(e) {
+        e.preventDefault();
+
+        var csrftoken = getCookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    var question = $('#editedquestion'+knowledge_id).val();
+    var answer = $('#editedanswer'+knowledge_id).val();
+    var params = {
+      csrfmiddlewaretoken : csrftoken,
+      statement: "" + question,
+      answer: "" + answer,
+      bot: botId
+    };
+    console.log(params);
+    $.ajax({
+      type : 'PUT',
+      url : editknowledgeUrl,
+      data : JSON.stringify(params),
+      contentType: 'application/json',
+      success : function(json) {
+        alert('Query was successfully Edited!');
+        window.location = '/bots/' + botId;
+      },
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
+    }
+  </script>
+
+
+  <script>
+    function acceptKnowledge(knowledge_id){
+      var acceptknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/' + knowledge_id + '/'
+      if (confirm('Are you sure you want to add this knowledge to the existing ones?')){
+        var params = {
+          csrfmiddlewaretoken : csrftoken,
+          is_accepted: true
+        };
+        $.ajax({
+          type: 'PUT',
+          url: acceptknowledgeUrl,
+          data: JSON.stringify(params),
+          contentType: 'application/json',
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+          },
+          success : function(json) {
+            alert('Knowledge was successfully added!');
+            window.location = '/bots/{{ bot.id }}';
+          },
+          error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": ");
+          }
+        });
+      }
+    }
+  </script>
+
+
+  <script>
+    function deleteKnowledge(knowledge_id){
+      var deleteknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/' + knowledge_id + '/'
+      if (confirm('Are you sure you want to delete this knowledge?')){
+        $.ajax({
+          type: 'DELETE',
+          url: deleteknowledgeUrl,
+          contentType: 'application/json',
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+          },
+          success : function(json) {
+            alert('Knowledge was successfully Deleted!');
+            window.location = '/bots/{{ bot.id }}';
+          },
+          error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": ");
+          }
+        });
+      }
+    }
+  </script>
+
+
+  <script>
+    var addknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/';
+    var botId = '{{ bot.id }}'
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    $("#addknowledgeForm").on('submit', function(e) {
+      e.preventDefault();
+
+      var csrftoken = getCookie('csrftoken');
+
+      function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    var question = $('#question').val();
+    var answer = $('#answer').val();
+    var params = {
+      csrfmiddlewaretoken : csrftoken,
+      statement: "" + question,
+      answer: "" + answer,
+      is_accepted: true,
+      bot: botId
+    };
+
+    $.ajax({
+      type : 'POST',
+      url : addknowledgeUrl,
+      data : JSON.stringify(params),
+      contentType: 'application/json',
+      success : function(json) {
+        alert('Query was added Successfully!');
+        window.location = '/bots/' + botId;
+      },
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
+</script>
+{% endblock %}
