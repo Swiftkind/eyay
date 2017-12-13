@@ -71,3 +71,71 @@
   </div>
 </div>
 {% endblock %}
+
+{% block js %}
+
+<script>
+  var addbotUrl = '{% url "bot-list" %}';
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = jQuery.trim(cookies[i]);
+        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  $("#addbotForm").on('submit', function(e) {
+    e.preventDefault();
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    var name = $('#name').val();
+    var description = $('#description').val();
+    var category = $('#category').val();
+    var tags = $('#tags').val();
+    var params = {
+      csrfmiddlewaretoken : csrftoken, 
+      name: "" + name, 
+      description: "" + description,
+      category: "" + category,
+      is_active: true,
+      tags: "" + tags,
+      creator: {{ request.user.id }}
+    };
+
+    $.ajax({
+      type : 'POST',
+      url : addbotUrl,
+      data : JSON.stringify(params),
+      contentType: 'application/json',
+      success : function(json) {
+        alert('Bot was added Successfully!');
+        window.location = '/bots/' + json.id;
+      },
+      error : function(xhr,errmsg,err) {
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
+</script>
+{% endblock %}

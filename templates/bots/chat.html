@@ -40,3 +40,90 @@
   </div>
 </div>
 {% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  var chatterbotUrl = '/api/bots/{{ bot.id }}/chat/';
+  var botknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/';
+  var botId = '{{ bot.id }}'
+  var csrftoken = Cookies.get('csrftoken');
+  function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    }
+  });
+
+  var $chatlog = $('.chat-messages');
+  var $input = $('.input-message');
+  var $sayButton = $('.submit-message');
+  var chat_log = document.getElementById('chat-messages');
+
+  var needAnswer = false;
+  var prev = '';
+
+  function createRow(sender, text) {
+    if (sender == 'You')
+      $chatlog.append('<p><span class="chat-name user">'+sender+':</span> '+text+'</p>');
+    else
+      $chatlog.append('<p><span class="chat-name">'+sender+':</span> '+text+'</p>');
+    chat_log.scrollTop = chat_log.scrollHeight;
+  }
+
+  function submitInput() {
+    var inputData = {
+      'message': $input.val()
+    };
+    $input.val('');
+    createRow('You', inputData.message);
+
+    if (needAnswer) {
+      console.log(JSON.stringify({'statement': "" + prev, 'answer': "" + inputData.message, 'bot': botId}));
+      $.ajax({
+        type: 'POST',
+        url: botknowledgeUrl,
+        data: JSON.stringify({'statement': "" + prev, 'answer': "" + inputData.message, 'bot': botId}),
+        contentType: 'application/json',
+        success: function(response) {
+          createRow('{{ bot.name }}', 'Ok I learned that, try asking me again.');
+        },
+        error: function(err) {
+          if (err.status == 403) createRow('{{ bot.name }}', 'I\'m sorry but \
+            only my creator is allowed to teach me things.');
+        }
+    });
+      needAnswer = false;
+    } else {
+      $.ajax({
+        type: 'POST',
+        url: chatterbotUrl,
+        data: JSON.stringify(inputData),
+        contentType: 'application/json',
+        success: function(data) {
+          data = JSON.parse(data);
+          if(data.confidence == null){
+            createRow('{{ bot.name }}', '' + data.response);
+            prev = inputData.message;
+            needAnswer = true;
+          } else {
+            createRow('{{ bot.name }}', '' + data.response + ' (' +data.confidence+ '%)');
+          }
+        },
+      });
+    }
+  }
+
+  $sayButton.click(function() {
+    submitInput();
+  });
+  $input.keydown(function(event) {
+    if (event.keyCode == 13) {
+      submitInput();
+    }
+  });
+</script>
+{% endblock %}

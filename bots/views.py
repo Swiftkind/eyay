@@ -143,7 +143,7 @@ class ChatBot(APIView):
 
 
 class ChatBotAppView(TemplateView):
-    template_name = "bot/chat.html"
+    template_name = "bots/chat.html"
 
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
@@ -152,7 +152,7 @@ class ChatBotAppView(TemplateView):
 
 
 class IndexView(TemplateView):
-    template_name = 'bot/index.html'
+    template_name = 'bots/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -187,12 +187,12 @@ class IndexView(TemplateView):
 
 
 class AddChatBotView(TemplateView):
-    template_name = "bot/addbot.html"
+    template_name = "bots/addbot.html"
 
 
 class BotDetailView(DetailView):
     model = Bot
-    template_name = 'bot/botdetails.html'
+    template_name = 'bots/botdetails.html'
 
     def get_context_data(self,**kwargs):
         knowledge = Knowledge.objects.filter(bot=self.kwargs['pk']).order_by('id')
