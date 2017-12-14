@@ -6,6 +6,11 @@
 <div class="collection-custom">
   <div class="container">
     <div class="row">
+      <br>
+      {% for message in messages %}
+      <div class="montserrat alert alert-success" role="alert">{{ message }}</div>
+      {% endfor %}
+
       <div class="collection-align-center">
         <br><br>
         <img src="{% static 'images/bots/bot-pic.png' %}" class="chat-bot-img">
@@ -47,15 +52,10 @@
   var botknowledgeUrl = '/api/bots/{{ bot.id }}/knowledges/';
   var botId = '{{ bot.id }}'
   var teachReply = "{% if user == bot.creator %}Ok I learned that, try asking me again.{% else %}Ok, I'll have to ask my creator's approval for this.{% endif %}";
-  var csrftoken = Cookies.get('csrftoken');
-  function csrfSafeMethod(method) {
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
+
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
-      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-      }
+      xhr.setRequestHeader("X-CSRFToken", '{{ csrftoken }}');
     }
   });
 
