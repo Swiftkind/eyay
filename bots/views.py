@@ -2,16 +2,13 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import (
     Paginator, 
     EmptyPage, 
     PageNotAnInteger
     )
-from rest_framework.generics import (
-    ListAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView
-    )
+
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
@@ -21,9 +18,12 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_500_INTERNAL_SERVER_ERROR
     )
+
+from datetime import datetime, timedelta
 import json
 
 from .models import Bot, Knowledge
+from .mixins import UserIsOwnerMixin
 from .serializers import (
     BotDetailsSerializer, 
     ArchivedBotSerializer,
@@ -76,7 +76,7 @@ class KnowledgeViewSet(ModelViewSet):
         if self.request.user == bot.creator: 
             serializer.save(bot=bot, is_accepted=True)
         serializer.save(bot=bot)
-
+        
 
 class ChatBot(APIView):
     def post(self, request, *args, **kwargs):
@@ -118,8 +118,13 @@ class ChatBot(APIView):
 
         # contextual and non-contextual similarity scores,
         # then join both as a set for each statement
-        vector_scores = [round(message.similarity(st_vector).item(), 4) 
-                            for st_vector in statement_vectors]
+
+        # Note: spaCy will return a vector filled with 0s if the string to be
+        # parsed is not a word, or not in the corpus' vocabulary, causing
+        # .similarity() to return a Python float instead of a NumPy float 
+        vector_scores = [0 if isinstance(message.similarity(st_vector), float)
+                        else round(message.similarity(st_vector).item(), 4) 
+                        for st_vector in statement_vectors]
         edist_scores = [str_similarity(lemmatized_input, lm_vector) 
                             for lm_vector in lemmatized_vectors]
         vector_and_edist = [x for x in zip(vector_scores, edist_scores)]
@@ -127,23 +132,20 @@ class ChatBot(APIView):
         # look for statement in knowledge with highest similarity score,
         # considering both contextual and non-contextual scores
         # first store answer's index, later be converted to actual answer
-        bot_response = {'response': 0, 'confidence': 0.0, 'a': 0.0, 'b': 0.0} 
+        bot_response = {'response': 0, 'confidence': 0.0} 
         for index, score in enumerate(vector_and_edist):
-            avg_score = ((score[0]*.7)+(score[1]*.3))
-            print(score[0], score[1], avg_score)
+            if score[0] > 0:
+                final_score = (score[0] * 0.7) + (score[1] * 0.3)
+            else:
+                final_score = score[1]
 
-            # if abs(avg_score - bot_response['confidence']) <= 0.03:
-            #     if bot_response['a'] < score[0]:
-            #         bot_response = {'response': index, 'confidence': avg_score, 'a': score[0], 'b': score[1]}
+            if final_score > bot_response['confidence']:
+                bot_response = {'response': index, 'confidence': final_score}
 
-            if avg_score > bot_response['confidence']:
-                bot_response = {'response': index, 'confidence': avg_score, 'a': score[0], 'b': score[1]}
-
-            if avg_score == 1:
+            if final_score == 1:
                 break        
 
         if bot_response['confidence'] < 0.65:
-            print(suggested_statements)
             if self.request.data.get('message') in suggested_statements:
                 return Response(json.dumps({'response': 'I have a pending query with the same \
             question you asked that needs to be accepted by my creator.'})
@@ -169,38 +171,40 @@ class ChatBotAppView(TemplateView):
         return context
 
 
-class IndexView(TemplateView):
+class IndexView(ListView):
+    model = Bot
+    context_object_name = 'bots'
     template_name = 'bots/index.html'
+    paginate_by = 6
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(is_archived=False).order_by('-id')
+        status = self.request.GET.get('status')
+        if status and status != 'None':
+            if status.lower() in ('active', 'inactive'):
+                status = True if status.lower() == 'active' else False
+                queryset = queryset.filter(is_active=status)
+            else:
+                raise Http404('Invalid status ({0}): No results to show'.format(status))
+        created = self.request.GET.get('created')
+        if created and created != 'None':
+            if created.lower() in ('week', 'month'):
+                date_today = datetime.today()
+                last_week = date_today - timedelta(days=7)
+                last_month = date_today - timedelta(days=31)
+
+                created = last_week if created == 'week' else last_month
+                queryset = queryset.filter(created__gte=created)
+            else:
+                raise Http404('Invalid filter ({0}): No results to show'.format(status))
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            queryset = Bot.objects.filter(creator=self.request.user,
-             is_archived=False).order_by('-id', '-created')
-            paginator = Paginator(queryset, 4)
-            page = self.request.GET.get('page')
-
-            try:
-                bots = paginator.page(page)
-            except PageNotAnInteger:
-                if page == 'first':
-                    bots = paginator.page(1)
-                    page = 1
-                elif page == 'last':
-                    bots = paginator.page(paginator.num_pages)
-                    page = paginator.num_pages
-                else:
-                    bots = paginator.page(1)
-            except EmptyPage:
-                bots = paginator.page(paginator.num_pages)
-                
-            page_numbers = [x for x in range(1, bots.paginator.num_pages+1)]
-
-            context['bots'] = bots
-            context['total_bots'] = queryset.count()
-            context['active_bots'] = queryset.filter(is_active=True).count()
-            context['page_numbers'] = page_numbers
-            context['page'] = page if page else 1
+        context['status'] = self.request.GET.get('status')
+        context['created'] = self.request.GET.get('created')
+        context['total_bots'] = Bot.objects.filter(is_archived=False).count()
+        context['active_bots'] = Bot.objects.filter(is_archived=False, is_active=True).count()
         return context
 
 
@@ -208,19 +212,97 @@ class AddChatBotView(TemplateView):
     template_name = "bots/addbot.html"
 
 
-class BotDetailView(DetailView):
-    model = Bot
+class BotDetailView(UserIsOwnerMixin, ListView):
+    model = Knowledge
+    context_object_name = 'bot_knowledge'
     template_name = 'bots/botdetails.html'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+            is_accepted=True, bot=self.kwargs['pk']).order_by('-id')
+        return queryset
 
     def get_context_data(self,**kwargs):
-        knowledge = Knowledge.objects.filter(bot=self.kwargs['pk'], is_accepted=True).order_by('id')
         context = super().get_context_data(**kwargs)
-        if knowledge.exists():
-            context['bot_knowledge'] = knowledge
-            context['bot'] = get_object_or_404(Bot, pk=self.kwargs['pk'])
-            context['suggested_knowledge'] = Knowledge.objects.filter(bot=self.kwargs['pk']
-                , is_accepted=False).order_by('id')
-        else:
-            pass
-            
+        context['bot'] = get_object_or_404(Bot, pk=self.kwargs['pk'])
+        suggested_knowledge = self.model.objects.filter(
+            is_accepted=False, bot=self.kwargs['pk']).order_by('id')
+        p = self.request.GET.get('p')
+        paginator_b = Paginator(suggested_knowledge, 5)
+
+        try:
+            suggestions = paginator_b.page(p) if p else paginator_b.page(1)
+        except PageNotAnInteger:
+            raise Http404('Page can not be converted to an int.')
+        except EmptyPage:
+            raise Http404('Invalid page ({}): That page contains no results'.format(p))
+
+        context['page_a'] = context['page_obj'].number
+        context['page_b'] = suggestions.number
+        context['suggestions'] = suggestions
+        context['num_pages_b'] = paginator_b.num_pages
         return context
+
+
+class MyBots(LoginRequiredMixin, ListView):
+    model = Bot
+    context_object_name = 'bots'
+    template_name = 'bots/mybots.html'
+    paginate_by = 6
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+            creator=self.request.user, is_archived=False).order_by('-id')
+        status = self.request.GET.get('status')
+        if status and status != 'None':
+            if status.lower() in ('active', 'inactive'):
+                status = True if status.lower() == 'active' else False
+                queryset = queryset.filter(is_active=status)
+            else:
+                raise Http404('Invalid status ({0}): No results to show'.format(status))
+        created = self.request.GET.get('created')
+        if created and created != 'None':
+            if created.lower() in ('week', 'month'):
+                date_today = datetime.today()
+                last_week = date_today - timedelta(days=7)
+                last_month = date_today - timedelta(days=31)
+
+                created = last_week if created == 'week' else last_month
+                queryset = queryset.filter(created__gte=created)
+            else:
+                raise Http404('Invalid filter ({0}): No results to show'.format(status))
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['status'] = self.request.GET.get('status')
+        context['created'] = self.request.GET.get('created')
+        context['total_bots'] = Bot.objects.filter(creator=user, is_archived=False).count()
+        context['active_bots'] = Bot.objects.filter(
+            is_active=True, creator=user, is_archived=False).count()
+        return context
+
+
+class ArchivedBots(LoginRequiredMixin, ListView):
+    model = Bot
+    context_object_name = 'bots'
+    template_name = 'bots/archive.html'
+    paginate_by = 6
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+            creator=self.request.user, is_archived=True).order_by('-id')
+        created = self.request.GET.get('created')
+        if created and created != 'None':
+            if created.lower() in ('week', 'month'):
+                date_today = datetime.today()
+                last_week = date_today - timedelta(days=7)
+                last_month = date_today - timedelta(days=31)
+
+                created = last_week if created == 'week' else last_month
+                queryset = queryset.filter(created__gte=created)
+            else:
+                raise Http404('Invalid filter ({0}): No results to show'.format(status))
+        return queryset

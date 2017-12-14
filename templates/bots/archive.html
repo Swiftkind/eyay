@@ -1,0 +1,132 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+
+{% block title %}Archived Bots{% endblock %}
+
+{% block main_text %}Archived Bots{% endblock %}
+
+{% block sub_text %}You've archived {{ bots.count }} bot(s){% endblock %}
+
+{% block content %}
+<div class="content">
+  <div class="container">
+    <nav class="navbar">
+     <ul class="nav navbar-nav right-nav ">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle filters-custom " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% if created == "week" %}Last Week{% elif created == "month" %}Last Month{% else %}All Time{% endif %} &nbsp;<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="?created=week">Last Week</a></li>
+          <li><a href="?created=month">Last Month</a></li>
+          <li><a href=".">All Time</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    {% if is_paginated %}
+    <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+      {% if page_obj.has_previous %}
+      <li><a href="?page=1&created={{ created }}" class="font-color">First</a></li>
+      <li><a href="?page={{ page_obj.previous_page_number }}&created={{ created }}">{{ page_obj.previous_page_number }}</a></li>
+      {% endif %}
+      <li class="active"><a>{{ page_obj.number }}</a></li>
+      {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}&created={{ created }}">{{ page_obj.next_page_number }}</a></li>
+      <li><a href="?page={{ paginator.num_pages }}&created={{ created }}">Last</a></li>
+      {% endif %}
+    </ul>
+    {% endif %}
+  </nav>
+</div>
+
+<div class="container">
+  <div class="row">
+    {% for bot in bots %}
+      <a href="#">
+    <div class="col-xs-12 col-md-6">
+      <div class="panel panel-body bot-card">
+        <div>
+          <a href="{% url 'botdetails' bot.id %}" class="bot-name">{{ bot.name }}</a> 
+          <div class="status-option-container">  
+            <div class="btn-group">
+              <span class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class=" glyphicon glyphicon-option-horizontal "></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" onclick="restoreBot({{ bot.id }});return false;">Restore</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#" onclick="deleteBot({{ bot.id }});return false;">Delete</a></li>
+                </ul>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body bot-desc">
+          <p>{{ bot.description|truncatechars:200 }}</p>
+          <span class="date-created-footer">Date Created</span>
+          <div><strong>{{ bot.created|date:"m/d/Y" }}</strong></div>
+        </div>   
+      </div>
+    </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+  function restoreBot(bot_id){
+    if (confirm('Restore this bot?')) {
+      $.ajax({
+        type: 'PATCH',
+        url: '/api/bots/archive/' + bot_id + '/',
+        data: JSON.stringify({
+          'is_archived': false
+        }),
+        contentType: 'application/json',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        },
+        success : function(json) {
+          alert('Bot was successfully restored');
+          window.location = '.';
+        },
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+                errorMessage += (errorMessages[err]+'\n');            
+          alert(errorMessage);
+          console.log(xhr.status + ": "); 
+        }
+      });
+    }
+  }
+
+  function deleteBot(bot_id){
+    var deleteBotUrl = '/api/bots/archive/' + bot_id + '/'
+    if (confirm('Are you sure you want to permanently delete this bot?')){
+      $.ajax({
+        type: 'DELETE',
+        url: deleteBotUrl,
+        contentType: 'application/json',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        },
+        success : function(json) {
+          alert('Bot was permanently deleted');
+          window.location = '.';
+        },
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+                errorMessage += (errorMessages[err]+'\n');            
+          alert(errorMessage);
+          console.log(xhr.status + ": "); 
+        }
+      });
+    }
+  }
+</script>
+{% endblock %}

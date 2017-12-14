@@ -7,6 +7,11 @@
   <div class="container">
 
     <div class="row">
+      <br>
+      {% for message in messages %}
+      <div class="montserrat alert alert-success" role="alert">{{ message }}</div>
+      {% endfor %}
+      
       <div class="col-xs-12 col-md-9">
         <div class="col-md-offset-1">
 
@@ -68,7 +73,7 @@
       </div>
 
       <div class="col-xs-12 col-md-2">
-        <a href="{% url 'chat-with-bot' bot.id %}" class="btn btn-primary new_bot-btn ">Start Chat</a>
+        <a href="{% url 'chat' bot.id %}" class="btn btn-primary new_bot-btn ">Start Chat</a>
       </div>
     </div>
 
@@ -118,13 +123,19 @@
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <div class="container">
-                  <ul class="pagination navbar-right pagination-style">
-                    <li><a href="#">First</a></li>
-                    <li><a href="#">5</a></li>
-                    <li class="active"><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">Last</a></li>
+                  {% if suggestions.has_other_pages %}
+                  <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+                    {% if suggestions.has_previous %}
+                    <li><a href="?page={{ page_a }}&p=1" class="font-color">First</a></li>
+                    <li><a href="?page={{ page_a }}&p={{ suggestions.previous_page_number }}">{{ suggestions.previous_page_number }}</a></li>
+                    {% endif %}
+                    <li class="active"><a>{{ suggestions.number }}</a></li>
+                    {% if suggestions.has_next %}
+                    <li><a href="?page={{ page_a }}&p={{ suggestions.next_page_number }}">{{ suggestions.next_page_number }}</a></li>
+                    <li><a href="?page={{ page_a }}&p={{ num_pages_b }}">Last</a></li>
+                    {% endif %}
                   </ul>
+                  {% endif %}
                 </div>
               </li>
             </ul>
@@ -141,8 +152,8 @@
             </div>
           </div>
 
-          {% if suggested_knowledge %}
-          {% for knowledge in suggested_knowledge %}
+          {% if suggestions %}
+          {% for knowledge in suggestions %}
           <div class="col-md-11 col-xs-10">
             <div class="col-md-offset-1 col-xs-offset-1">
               <div class="row knowledge-container">
@@ -258,13 +269,19 @@
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <div class="container">
-                  <ul class="pagination navbar-right pagination-style">
-                    <li><a href="#">First</a></li>
-                    <li><a href="#">5</a></li>
-                    <li class="active"><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">Last</a></li>
+                  {% if is_paginated %}
+                  <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+                    {% if page_obj.has_previous %}
+                    <li><a href="?page=1&p={{ page_b }}" class="font-color">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}&p={{ page_b }}">{{ page_obj.previous_page_number }}</a></li>
+                    {% endif %}
+                    <li class="active"><a>{{ page_obj.number }}</a></li>
+                    {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}&p={{ page_b }}">{{ page_obj.next_page_number }}</a></li>
+                    <li><a href="?page={{ paginator.num_pages }}&p={{ page_b }}">Last</a></li>
+                    {% endif %}
                   </ul>
+                  {% endif %}
                 </div>
               </li>
             </ul>
@@ -429,7 +446,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="prompt">
-                      This bot knows nothing. Please Initialize by adding queries.
+                      This bot knows nothing. Please initialize by adding queries.
                     </h3>
                   </div>
                 </div>

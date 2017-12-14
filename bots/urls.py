@@ -8,12 +8,16 @@ from .views import (
     ChatBotAppView,
     IndexView,
     AddChatBotView,
-    BotDetailView
+    BotDetailView,
+    MyBots,
+    ArchivedBots
     )
 
 
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^bots/$', MyBots.as_view(), name='bots'),
+    url(r'^bots/archive/$', ArchivedBots.as_view(), name='bots_archive'),
     url(r'^bots/add/$', AddChatBotView.as_view(), name='addbot'),
     url(r'^bots/(?P<pk>[0-9]+)/$', BotDetailView.as_view(), name='botdetails'),
     url(r'^bots/(?P<pk>[0-9]+)/chat/$', ChatBotAppView.as_view(), name='chat'),

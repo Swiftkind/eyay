@@ -38,7 +38,7 @@
                 <div class="custom-questions">
                   What do you want to call your bot?
                 </div> 
-                <input type="text" class="form-control" id="name" placeholder="e.g. Support Bot" autofocus required> 
+                <input type="text" class="form-control" id="name" placeholder="e.g. Support Bot" required> 
               </div>
               <div class="row">
                 <div class="custom-questions">
@@ -102,7 +102,7 @@
         xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
       },
       success : function(json) {
-        alert('Bot was added Successfully!');
+        alert('Bot was added successfully!');
         window.location = '/bots/' + json.id;
       },
       error : function(xhr,errmsg,err) {
