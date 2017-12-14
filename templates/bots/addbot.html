@@ -76,45 +76,15 @@
 
 <script>
   var addbotUrl = '{% url "bot-list" %}';
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-      var cookies = document.cookie.split(';');
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = jQuery.trim(cookies[i]);
-        if (cookie.substring(0, name.length + 1) == (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
 
   $("#addbotForm").on('submit', function(e) {
     e.preventDefault();
-
-    var csrftoken = getCookie('csrftoken');
-
-    function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-          xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-      }
-    });
 
     var name = $('#name').val();
     var description = $('#description').val();
     var category = $('#category').val();
     var tags = $('#tags').val();
     var params = {
-      csrfmiddlewaretoken : csrftoken, 
       name: "" + name, 
       description: "" + description,
       category: "" + category,
@@ -128,6 +98,9 @@
       url : addbotUrl,
       data : JSON.stringify(params),
       contentType: 'application/json',
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+      },
       success : function(json) {
         alert('Bot was added Successfully!');
         window.location = '/bots/' + json.id;

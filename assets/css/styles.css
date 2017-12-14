@@ -71,11 +71,12 @@
 @font-face {
   family: 'OpenSans-SemiboldItalic';
   src: url(../fonts/OpenSans-SemiboldItalic.ttf); }
+/* Base Design  */
 body {
   padding-top: 50px;
   background: #efeff7; }
 
-/* Navbar Custom */
+/* Base Design - Custom Navbar*/
 .custom-navbar {
   background-color: #fff;
   border: solid 1px #e4e4ea; }
@@ -93,22 +94,22 @@ body {
     text-align: left;
     color: #94989f; }
 
-/* Custom Content Bot Details | Add Bot */
+/* General Design - Custom Content Bot Details | Add Bot */
 .content-margin {
   padding-top: 70px;
   background-color: #efeff7; }
 
-/* Custom Pagination Bot Details | Dash Board */
+/* General Design - Custom Pagination Bot Details | Dash Board */
 .pagination-style li a {
   background-color: transparent;
   border: none; }
 
-/* Custom Header for Chat | Bot Details */
+/* General Deisgn - Custom Header for Chat | Bot Details */
 .collections {
   padding-bottom: 25px;
   background-color: #fff; }
 
-/* Header Custom */
+/* Index Design - Custom Header */
 .title {
   font-family: "Montserrat-SemiBold";
   font-size: 30px;
@@ -137,13 +138,11 @@ body {
   font-family: "Montserrat-Bold";
   font-size: 18px;
   letter-spacing: .2px;
-  margin-left: inherit;
   color: #636c80; }
 
 .header-separator {
   border-top: solid 1px #f3f4f5;
-  padding-top: 15px;
-  margin-left: 25px; }
+  padding-top: 15px; }
 
 .summary-img {
   width: 46px;
@@ -163,7 +162,7 @@ body {
   line-height: 100%;
   color: #94989f; }
 
-/* Filters */
+/* Index Design - Filters */
 .filters-custom {
   border: transparent;
   font-family: "Montserrat-Regular";
@@ -171,8 +170,7 @@ body {
   text-align: left;
   color: #94989f; }
 
-.button-active {
-  margin: 15px;
+.selected-status {
   background-color: #e4e4eb;
   border: solid 1px #dedee2; }
 
@@ -192,7 +190,7 @@ body {
   background-color: #f53458;
   display: inline-flex; }
 
-/* Content  Custom*/
+/* Index Design - Custom Content */
 .content {
   padding-top: 50px;
   background-color: transparent; }
@@ -205,14 +203,21 @@ body {
       font-family: "Montserrat-SemiBold";
       font-size: 13.9px;
       line-height: 1.71;
-      color: #636c80; }
+      color: #636c80;
+      margin-left: 15px; }
     .content .bot-card .status-option-container {
       float: right; }
+      .content .bot-card .status-option-container .status-btn {
+        font-size: 0.9em;
+        width: 80px;
+        font-family: "Montserrat-Regular";
+        float: left; }
     .content .bot-card .bot-desc {
       font-family: "OpenSans-Regular";
       font-size: 14px;
       color: #94989f; }
 
+/* Auth Designs */
 .form-panel {
   padding: 50px 50px;
   font-family: "Montserrat-Regular"; }
@@ -228,6 +233,130 @@ body {
 .btn-google {
   background-color: #d34836; }
 
+/* Bot Details Design - Custom Header */
+.bot-description {
+  font-family: "Montserrat-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  letter-spacing: .1px;
+  color: #94989f; }
+
+.bot-detail-content {
+  margin-bottom: 40px;
+  max-height: 1320px; }
+
+.header-divider {
+  border-top: solid 1px #f3f4f5;
+  padding-top: 15px; }
+
+.sign span {
+  color: #0984ff; }
+
+/* Bot Details Design - Custom Content */
+.text-question {
+  /* Text Design*/
+  font-family: "Montserrat-SemiBold";
+  font-size: 25px;
+  line-height: 2;
+  letter-spacing: .2px;
+  color: #636c80;
+  /* Text Position */
+  margin-bottom: 20px;
+  padding-right: 5px;
+  border-right: 1px solid #efeff7; }
+
+.knowledge-container {
+  margin-top: 20px; }
+
+.question-icon {
+  font-family: "Montserrat-SemiBold";
+  font-size: 24.1px;
+  line-height: 1.33;
+  color: #3cf0a6;
+  border-right: solid 1px #e4e4ea;
+  /* icon position */
+  padding-right: 20px; }
+
+.question {
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  color: #636c80; }
+
+.answer-word {
+  font-family: "Montserrat-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  color: #d7dbe6; }
+
+.answer {
+  font-family: "OpenSans-Regular";
+  font-size: 14px;
+  line-height: 1.71;
+  letter-spacing: .4px;
+  color: #94989f;
+  padding-top: 12px;
+  margin-left: 17px; }
+
+.bot-details-footer {
+  min-height: 358px;
+  border-top: solid 1px #efeff7;
+  width: 100%; }
+
+.knowledge-header {
+  height: auto;
+  border-bottom: solid 1px #efeff7; }
+
+.Add-Queries {
+  font-family: "Montserrat-SemiBold";
+  font-size: 18px;
+  line-height: 2;
+  letter-spacing: .2px;
+  color: #636c80;
+  padding-top: 10px; }
+
+.query-label {
+  font-family: "Montserrat-SemiBold";
+  font-size: 14px;
+  line-height: 1.71;
+  color: #94989f; }
+
+.save-query {
+  /* Text Content */
+  font-family: "Montserrat-Regular";
+  font-size: 16px;
+  line-height: 2.25;
+  letter-spacing: .2px;
+  color: #fff;
+  /* Button Design */
+  background-color: #0984ff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 50px;
+  /* Button Position */
+  float: right;
+  margin-top: 50px; }
+
+.edit-link {
+  color: #94989f;
+  font-family: "Montserrat-Regular";
+  font-size: 12px;
+  padding-left: 10px; }
+
+.symbols {
+  color: #0984ff;
+  padding: 5px; }
+
+.tab-position {
+  margin-top: 30px; }
+  .tab-position li {
+    margin-left: 15px; }
+
+.option-position {
+  color: #d7dbe6;
+  float: right;
+  margin-right: 30px; }
+
+/* Custom Chat Design */
 .chat-input {
   padding-top: 25px; }
 
@@ -260,135 +389,7 @@ body {
   margin: auto;
   text-align: center; }
 
-/* Header of Bot Details*/
-.bot-description {
-  font-family: "Montserrat-Regular";
-  font-size: 14px;
-  line-height: 1.71;
-  letter-spacing: .1px;
-  color: #94989f; }
-
-.bot-detail-content {
-  margin-bottom: 40px;
-}
-
-.header-divider {
-  border-top: solid 1px #f3f4f5;
-  padding-top: 15px;
-  margin-left: 75px; }
-
-.sign span {
-  color: #0984ff; }
-
-/* Content */
-.text-question {
-  /* Text Design*/
-  font-family: "Montserrat-SemiBold";
-  font-size: 18px;
-  line-height: 2;
-  letter-spacing: .2px;
-  color: #636c80;
-  /* Text Position */
-  margin-top: 64px;
-  margin-bottom: 20px; }
-
-.knowledge-container {
-  border: 1px solid #e4e4ea;
-  border-radius: 2px;
-  box-shadow: 0px 1px 7.8px 0.2px rgba(0, 0, 0, 0.04);
-  margin-top: 5px;
-  min-height: 250px; }
-
-.question-icon {
-  font-family: "Montserrat-SemiBold";
-  font-size: 24.1px;
-  line-height: 1.33;
-  color: #3cf0a6;
-  border-right: solid 1px #e4e4ea;
-  /* icon position */
-  padding-right: 10px; }
-
-.question {
-  font-family: "Montserrat-SemiBold";
-  font-size: 18px;
-  color: #636c80; }
-
-.answer-word {
-  font-family: "Montserrat-Regular";
-  font-size: 14px;
-  line-height: 1.71;
-  color: #d7dbe6;
-  /* position */
-  padding-top: 21px; }
-
-.answer {
-  font-family: "OpenSans-Regular";
-  font-size: 14px;
-  line-height: 1.71;
-  letter-spacing: .4px;
-  color: #94989f;
-  padding-top: 12px;
-  margin-left: 37px; }
-
-.bot-details-footer {
-  min-height: 358px;
-  border-top: solid 1px #efeff7;
-  width: 100%; }
-
-.knowledge-header {
-  height: auto;
-  border-bottom: solid 1px #efeff7; }
-
-.Add-Queries {
-  font-family: "Montserrat-SemiBold";
-  font-size: 18px;
-  line-height: 2;
-  letter-spacing: .2px;
-  color: #636c80;
-  padding-top: 10px; }
-
-.query-label {
-  font-family: "Montserrat-SemiBold";
-  font-size: 14px;
-  line-height: 1.71;
-  color: #636c80;
-  margin-top: 15px; }
-
-input[type=text] {
-  margin-top: 20px;
-  border-bottom: solid 1px #efeff7;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  width: 100%; }
-
-.save-query {
-  /* Text Content */
-  font-family: "Montserrat-Regular";
-  font-size: 16px;
-  line-height: 2.25;
-  letter-spacing: .2px;
-  color: #fff;
-  /* Button Design */
-  background-color: #0984ff;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 50px;
-  /* Button Position */
-  float: right;
-  margin-top: 50px; }
-
-.edit-link {
-  color: #94989f;
-  font-family: "Montserrat-Regular";
-  font-size: 12px;
-  padding-left: 10px; }
-
-.symbols {
-  color: #0984ff;
-  padding: 5px; }
-
-/* Custom Header for New Bot Page */
+/* New Bot - Custom Header */
 .collection-height {
   background-color: #fff;
   height: 540px; }
@@ -413,6 +414,7 @@ input[type=text] {
       color: #94989f;
       margin-top: 25px; }
 
+/* New Bot - Custom Content */
 .add-cotent {
   height: 838px; }
   .add-cotent .bot-header {
@@ -429,18 +431,6 @@ input[type=text] {
       padding: 10px 10px; }
   .add-cotent .custom-form {
     margin: 25px 30px; }
-    .add-cotent .custom-form .custom-questions {
-      font-family: "Montserrat-Regular";
-      color: #636c80;
-      line-height: 1.71;
-      margin-top: 50px; }
-    .add-cotent .custom-form input[type=text] {
-      margin-top: 44px;
-      border-bottom: solid 1px #efeff7;
-      border-top: none;
-      border-left: none;
-      border-right: none;
-      width: 100%; }
     .add-cotent .custom-form .done-btn {
       /* Text Content */
       font-family: "Montserrat-Regular";
@@ -456,5 +446,83 @@ input[type=text] {
       /* Button Position */
       float: right;
       margin-top: 120px; }
+
+.custom-questions {
+  font-family: "Montserrat-Regular";
+  color: #636c80;
+  line-height: 1.71;
+  margin-top: 15px; }
+
+input[type=text] {
+  border-bottom: solid 1px #efeff7;
+  border-top: hidden;
+  border-left: none;
+  border-right: none;
+  width: 100%; }
+
+.prompt {
+  text-align: center;
+  font-family: "Montserrat-Bold";
+  color: #636c80; }
+
+.bot-btn {
+  /* button-text */
+  font-family: "Montserrat-Regular";
+  font-size: 16px;
+  letter-spacing: .2px;
+  /* button */
+  background-color: #0984ff;
+  padding: 10px 45px;
+  margin: 30px 0;
+  border: transparent; }
+
+.add-query-btn {
+  background-color: #f3f4f5;
+  border: 1px solid #efeff7; }
+
+.prompt-position {
+  margin: 60px 0; }
+
+.position-icons {
+  margin-right: 50px; }
+
+.taginputs-min-width {
+  min-width: 500px; }
+
+.modal-foot {
+  margin-top: 10px; }
+
+.modal-body-custom {
+  padding: 30px; }
+  .modal-body-custom form div {
+    margin-top: 20px; }
+
+.modal-title-custom {
+  font-family: "Montserrat-Regular";
+  color: #4b83fc; }
+
+.btn-color {
+  background-color: #4b83fc;
+  color: #fff; }
+
+.panel-title-color {
+  background-color: #fff;
+  min-height: 55px;
+  max-height: 100%; }
+
+.question-img {
+  display: none;
+  position: absolute;
+  float: left;
+  left: -16px;
+  top: -11px;
+  max-height: 145px; }
+
+.submit-message {
+  margin-top: 18px; }
+
+.selected-status {
+  background-color: #e4e4eb;
+  border: solid 1px #dedee2; }
 
 /*# sourceMappingURL=styles.css.map */
