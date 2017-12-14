@@ -88,6 +88,13 @@ class ChatBot(APIView):
         bot_knowledge = Knowledge.objects.filter(
             bot=self.kwargs['pk'], 
             is_accepted=True).order_by('id').values_list('statement', 'answer')
+        suggested_knowledge = Knowledge.objects.filter(
+            bot=self.kwargs['pk'], 
+            is_accepted=False).order_by('id').values_list('statement')
+
+        suggested_statements = []
+        for line in suggested_knowledge:
+            suggested_statements.append(line[0])
         
         # separate statements and answers from bot knowledge
         statements = []
@@ -120,18 +127,29 @@ class ChatBot(APIView):
         # look for statement in knowledge with highest similarity score,
         # considering both contextual and non-contextual scores
         # first store answer's index, later be converted to actual answer
-        bot_response = {'response': 0, 'confidence': 0.0} 
+        bot_response = {'response': 0, 'confidence': 0.0, 'a': 0.0, 'b': 0.0} 
         for index, score in enumerate(vector_and_edist):
-            avg_score = (score[0]+score[1])/2.0
+            avg_score = ((score[0]*.7)+(score[1]*.3))
+            print(score[0], score[1], avg_score)
+
+            # if abs(avg_score - bot_response['confidence']) <= 0.03:
+            #     if bot_response['a'] < score[0]:
+            #         bot_response = {'response': index, 'confidence': avg_score, 'a': score[0], 'b': score[1]}
 
             if avg_score > bot_response['confidence']:
-                bot_response = {'response': index, 'confidence': avg_score}        
+                bot_response = {'response': index, 'confidence': avg_score, 'a': score[0], 'b': score[1]}
 
             if avg_score == 1:
                 break        
 
         if bot_response['confidence'] < 0.65:
-            return Response(json.dumps({'response': 'I dont know a good answer for that, \
+            print(suggested_statements)
+            if self.request.data.get('message') in suggested_statements:
+                return Response(json.dumps({'response': 'I have a pending query with the same \
+            question you asked that needs to be accepted by my creator.'})
+            , status=HTTP_200_OK)
+            else:
+                return Response(json.dumps({'response': 'I dont know a good answer for that, \
             teach me by entering the proper answer to the question/query above.'})
             , status=HTTP_200_OK)
         else:
@@ -195,11 +213,13 @@ class BotDetailView(DetailView):
     template_name = 'bots/botdetails.html'
 
     def get_context_data(self,**kwargs):
-        knowledge = Knowledge.objects.filter(bot=self.kwargs['pk']).order_by('id')
+        knowledge = Knowledge.objects.filter(bot=self.kwargs['pk'], is_accepted=True).order_by('id')
         context = super().get_context_data(**kwargs)
         if knowledge.exists():
             context['bot_knowledge'] = knowledge
             context['bot'] = get_object_or_404(Bot, pk=self.kwargs['pk'])
+            context['suggested_knowledge'] = Knowledge.objects.filter(bot=self.kwargs['pk']
+                , is_accepted=False).order_by('id')
         else:
             pass
             

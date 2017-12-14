@@ -12,4 +12,5 @@ def clean_text(text):
 
 
 def str_similarity(statement, other_statement):
+    print(statement, other_statement)
     return fuzz.token_set_ratio(statement, other_statement)/100.0
