@@ -25,7 +25,8 @@ function main() {
       var knowledgeURL = 'http://localhost:8000/api/bots/'+bot+'/knowledges/';
       var teachReply = "I'll have to ask my creator's approval for this.";
       var html_url = "http://localhost:8000/api/bots/get_chatbox/";
-      var starting_message = "Hello there";
+      var data_message = params.getAttribute('data-message');
+      var starting_message =  data_message == null ? "Hello" : data_message;
 
       $.ajax({
         type: 'GET',
