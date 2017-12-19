@@ -1,18 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Sign In{% endblock %}
 
-{% block header %}
-<div class="collections">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-md-10">
-        <h1 class="title">Sign In</h1>
-        <p class="total-bots">Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a Bot Pro account.</p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+{% block main_text %}Sign In{% endblock %}
+
+{% block sub_text %}Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a Bot Pro account.{% endblock %}
 
 {% block content %}
 <div class="content">
