@@ -24,7 +24,7 @@ function main() {
       var chatURL = 'http://localhost:8000/api/bots/'+bot+'/chat/';
       var knowledgeURL = 'http://localhost:8000/api/bots/'+bot+'/knowledges/';
       var teachReply = "I'll have to ask my creator's approval for this.";
-      var html_url = "http://localhost:8000/api/bots/gethtml/";
+      var html_url = "http://localhost:8000/api/bots/get_chatbox/";
       var starting_message = "Hello there";
 
       $.ajax({
@@ -145,7 +145,7 @@ function main() {
         }
       });
     } else {
-      alert('Bot chatbox cannot be shown because data-target/data-bot is not defined or has an invalid value');
+      alert('Bot chatbox cannot be shown because data-bot is not defined or has an invalid value');
     }
   });
 }
