@@ -55,7 +55,7 @@
 
   $.ajaxSetup({
     beforeSend: function(xhr, settings) {
-      xhr.setRequestHeader("X-CSRFToken", '{{ csrftoken }}');
+      xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
     }
   });
 
@@ -118,6 +118,9 @@
             createRow('{{ bot.name }}', '' + data.response + ' (' +data.confidence+ '%)');
           }
         },
+        error: function(errorMessages) {
+          console.log(errorMessages);
+        }
       });
     }
   }

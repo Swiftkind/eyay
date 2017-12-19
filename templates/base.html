@@ -59,7 +59,7 @@
         <div class="row">
           <br>
           {% for message in messages %}
-          <div class="montserrat alert alert-success" role="alert">{{ message }}</div>
+          <div class="montserrat alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="alert">{{ message }}</div>
           {% endfor %}
 
           <div class="col-xs-12 col-md-10">

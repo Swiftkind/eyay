@@ -15,12 +15,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.status import (
     HTTP_200_OK,
+    HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_500_INTERNAL_SERVER_ERROR
     )
+from rest_framework.renderers import JSONRenderer
 
 from datetime import datetime, timedelta
 import json
+import numpy
+import string
 
 from .models import Bot, Knowledge
 from .mixins import UserIsOwnerMixin
@@ -71,9 +75,19 @@ class KnowledgeViewSet(ModelViewSet):
             self.permission_classes = []
         return super(self.__class__, self).get_permissions() 
 
+    def create(self, request, *args, **kwargs):
+        statement = request.data.get('statement')
+        if statement:
+            request.data['statement'] = statement.lower()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
+    
     def perform_create(self, serializer):
         bot = get_object_or_404(Bot, pk=self.kwargs['bot'])
-        if self.request.user == bot.creator: 
+        if self.request.user == bot.creator:
             serializer.save(bot=bot, is_accepted=True)
         serializer.save(bot=bot)
         
@@ -110,11 +124,16 @@ class ChatBot(APIView):
         # We then lemmatize vectors for non-contextual comparison
         # which can be derived from the vectors, then comparison 
         # will use fuzzy matching and levenshtein algorithm
-        statement_vectors = [parse_text(clean_text(statement)) for statement in statements]
-        lemmatized_vectors = [' '.join([tok.lemma_ for tok in st_vector 
-                                if tok.lemma_ != '-PRON-'])  for st_vector in statement_vectors]
-        message = parse_text(clean_text(message))
-        lemmatized_input = ' '.join([tok.lemma_ for tok in message if tok.lemma_ != '-PRON-'])
+        statement_vectors = [parse_text(clean_text(statement, 1)) for statement in statements]
+        statement_vectors_b = [parse_text(clean_text(statement)) for statement in statements]
+        lemmatized_vectors = [''.join([tok.lemma_ if tok.lemma_ in string.punctuation 
+                        else ' '+tok.lemma_ for tok in st_vector if tok.lemma_ 
+                        != '-PRON-']).strip() for st_vector in statement_vectors_b]
+
+        message_a = parse_text(clean_text(message, 1))
+        message_b = parse_text(clean_text(message))
+        lemmatized_input = ''.join([tok.lemma_ if tok.lemma_ in string.punctuation 
+            else ' '+tok.lemma_ for tok in message_b if tok.lemma_ != '-PRON-']).strip()
 
         # contextual and non-contextual similarity scores,
         # then join both as a set for each statement
@@ -122,8 +141,8 @@ class ChatBot(APIView):
         # Note: spaCy will return a vector filled with 0s if the string to be
         # parsed is not a word, or not in the corpus' vocabulary, causing
         # .similarity() to return a Python float instead of a NumPy float 
-        vector_scores = [0 if isinstance(message.similarity(st_vector), float)
-                        else round(message.similarity(st_vector).item(), 4) 
+        vector_scores = [0 if not isinstance(message_a.similarity(st_vector), numpy.float64)
+                        else round(message_a.similarity(st_vector).item(), 4) 
                         for st_vector in statement_vectors]
         edist_scores = [str_similarity(lemmatized_input, lm_vector) 
                             for lm_vector in lemmatized_vectors]
@@ -134,6 +153,7 @@ class ChatBot(APIView):
         # first store answer's index, later be converted to actual answer
         bot_response = {'response': 0, 'confidence': 0.0} 
         for index, score in enumerate(vector_and_edist):
+            print(score)
             if score[0] > 0:
                 final_score = (score[0] * 0.7) + (score[1] * 0.3)
             else:
@@ -143,10 +163,14 @@ class ChatBot(APIView):
                 bot_response = {'response': index, 'confidence': final_score}
 
             if final_score == 1:
-                break        
+                bot_response = {'response': index, 'confidence': 1}
+                break     
+
+            if score[1] == 1:
+                bot_response = {'response': index, 'confidence': 1}
 
         if bot_response['confidence'] < 0.65:
-            if self.request.data.get('message') in suggested_statements:
+            if message in suggested_statements:
                 return Response(json.dumps({'response': 'I have a pending query with the same \
             question you asked that needs to be accepted by my creator.'})
             , status=HTTP_200_OK)
