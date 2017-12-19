@@ -10,7 +10,8 @@ from .views import (
     AddChatBotView,
     BotDetailView,
     MyBots,
-    ArchivedBots
+    ArchivedBots,
+    Chatbox
     )
 
 
@@ -21,6 +22,7 @@ urlpatterns = [
     url(r'^bots/add/$', AddChatBotView.as_view(), name='addbot'),
     url(r'^bots/(?P<pk>[0-9]+)/$', BotDetailView.as_view(), name='botdetails'),
     url(r'^bots/(?P<pk>[0-9]+)/chat/$', ChatBotAppView.as_view(), name='chat'),
+    url(r'^api/bots/get_chatbox/$', Chatbox.as_view(), name='get_chatbox'),
     url(r'^api/bots/archive/$', 
         ArchiveViewSet.as_view({'get': 'list'}), 
         name='bots-archive-list'

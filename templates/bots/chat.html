@@ -93,8 +93,8 @@
           createRow('{{ bot.name }}', teachReply);
         },
         error: function(err) {
-          if (err.status == 403) createRow('{{ bot.name }}', 'I\'m sorry but \
-            only my creator is allowed to teach me things.');
+          if (err.status == 403) createRow('{{ bot.name }}', 'I\'m sorry but ' +
+            'only my creator is allowed to teach me things.');
         }
     });
       needAnswer = false;
@@ -106,13 +106,13 @@
         contentType: 'application/json',
         success: function(data) {
           data = JSON.parse(data);
-          if(data.confidence == null && data.response == 'I dont know a good answer for that, \
-            teach me by entering the proper answer to the question/query above.'){
+          if(data.confidence == null && data.response == "I don't know a good answer for that," +
+            " teach me by entering the proper answer to the question/query above."){
             createRow('{{ bot.name }}', '' + data.response);
             prev = inputData.message;
             needAnswer = true;
-          } else if(data.confidence == null && data.response == 'I have a pending query with the same \
-            question you asked that needs to be accepted by my creator.'){
+          } else if(data.confidence == null && data.response == "I have a pending query with " +
+            "the same question you asked that needs to be accepted by my creator."){
             createRow('{{ bot.name }}', '' + data.response);
           } else {
             createRow('{{ bot.name }}', '' + data.response + ' (' +data.confidence+ '%)');

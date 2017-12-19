@@ -171,12 +171,14 @@ class ChatBot(APIView):
 
         if bot_response['confidence'] < 0.65:
             if message in suggested_statements:
-                return Response(json.dumps({'response': 'I have a pending query with the same \
-            question you asked that needs to be accepted by my creator.'})
+                return Response(json.dumps({'response': (
+                    "I have a pending query with the same question you asked that" 
+                    "needs to be accepted by my creator.")})
             , status=HTTP_200_OK)
             else:
-                return Response(json.dumps({'response': 'I dont know a good answer for that, \
-            teach me by entering the proper answer to the question/query above.'})
+                return Response(json.dumps({'response': (
+                    "I don't know a good answer for that, teach me by entering the"
+                    " proper answer to the question/query above.")})
             , status=HTTP_200_OK)
         else:
             bot_response = {
@@ -330,3 +332,36 @@ class ArchivedBots(LoginRequiredMixin, ListView):
             else:
                 raise Http404('Invalid filter ({0}): No results to show'.format(status))
         return queryset
+
+
+class Chatbox(APIView):
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        bot = request.GET.get('bot')
+        bot_object = get_object_or_404(Bot, pk=bot)
+        bot = {
+            'id': bot_object.id,
+            'name': bot_object.name,
+            'description': bot_object.description,
+            'category': bot_object.category,
+            'tags': bot_object.tags,
+        }
+
+        css = [
+            'http://localhost:8000/static/css/chatbox.css'
+        ]
+
+        js = [
+            'http://localhost:8000/static/js/chatbox.js',
+        ]
+
+        with open('templates/bots/chatbox.html', 'r') as f:
+            chat_html = f.read()
+
+        html = [
+            chat_html
+        ]
+
+        data = {'bot': bot, 'css': css, 'js': js, 'html': html}
+        return Response(data)
