@@ -3,7 +3,7 @@ import string
 import spacy
 
 
-parse_text = spacy.load('en_core_web_sm')
+parse_text = spacy.load('en_core_web_lg')
 
 def clean_text(text, option=None):
     text = ' '.join([word for word in text.strip().lower().split()])
