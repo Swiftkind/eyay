@@ -17,9 +17,11 @@
           <p class="total-bots">{{ total_bots }} total bots</p>
         </div>
       </div>
+      {% if user.is_authenticated %}
       <div class="col-xs-12 col-md-2">
         <a href="{% url 'addbot' %}" class="btn btn-primary new_bot-btn ">New Bot</a>
       </div>
+      {% endif %}
     </div>
     <div class="row">
       <div class="col-xs-12 col-md-10">

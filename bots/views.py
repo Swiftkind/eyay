@@ -234,7 +234,7 @@ class IndexView(ListView):
         return context
 
 
-class AddChatBotView(TemplateView):
+class AddChatBotView(LoginRequiredMixin, TemplateView):
     template_name = "bots/addbot.html"
 
 

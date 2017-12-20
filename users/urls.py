@@ -1,3 +1,4 @@
+from allauth.account.views import confirm_email
 from django.conf.urls import url, include
 from django.contrib.auth.views import logout as logout_view
 from .views import (
@@ -11,6 +12,10 @@ from .views import (
 urlpatterns = [
     url(r'^accounts/logout/$', logout_view, {'next_page': '/'}),
     url(r'^accounts/profile', UserProfile.as_view(), name='user_profile'),
+    url(r'^api/auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$', 
+        confirm_email, 
+        name="account_confirm_email"
+        ),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/auth/', include('rest_auth.urls')),
     url(r'^api/auth/registration/', include('rest_auth.registration.urls')),
