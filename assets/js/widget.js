@@ -57,6 +57,7 @@ function main() {
           var $chatlog = $('#chat-history');
           var $input = $('#id_message');
           var $botName = $('#bot-name');
+          var $statusText = $('#status-text');
           var chat_log = document.getElementById('chat-history');
           var needAnswer = false;
           var prev = '';
@@ -84,6 +85,9 @@ function main() {
 
           $botName.html(bot.name);
           createRow(bot.name, starting_message);
+          if (!bot.is_active || bot.is_archived) createRow(bot.name, "I'm sorry, but my creator" +
+            " has set me to an inactive state :(");
+          else $statusText.html(bot.name + ' is active');
 
           function submitInput() {
             var inputData = {
@@ -113,7 +117,11 @@ function main() {
                 url: chatURL,
                 data: JSON.stringify(inputData),
                 contentType: 'application/json',
+                beforeSend: function() {
+                  $statusText.html(bot.name + ' is typing...');
+                },
                 success: function(data) {
+                  $statusText.html(bot.name + ' is active');
                   data = JSON.parse(data);
                   if (data.confidence == null && data.response == "I don't know a good answer for that," +
                    " teach me by entering the proper answer to the question/query above.") {

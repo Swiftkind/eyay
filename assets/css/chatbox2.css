@@ -672,15 +672,6 @@ hr {
   min-height: 1px;
 }
 
-input {
-  border: 0;
-  color: inherit;
-  font-family: inherit;
-  font-size: 100%;
-  line-height: normal;
-  margin: 0;
-}
-
 p { margin: 0; }
 
 .clearfix { *zoom: 1; } /* For IE 6/7 */
@@ -710,7 +701,7 @@ p { margin: 0; }
 }
 
 #live-chat h4:before {
-  background: #1a8a34;
+  background: #e60000;
   border-radius: 50%;
   content: "";
   display: inline-block;
@@ -725,14 +716,6 @@ p { margin: 0; }
 
 #live-chat h5 {
   font-size: 10px;
-}
-
-#live-chat input[type="text"] {
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  padding: 8px;
-  outline: none;
-  width: 100%;
 }
 
 .chat-close {
@@ -751,6 +734,9 @@ p { margin: 0; }
 
 .chat {
   background: #fff;
+  border: 1px solid black;
+  border-top: 0;
+  border-bottom: 0;
 }
 
 .chat-history {
@@ -761,21 +747,9 @@ p { margin: 0; }
 
 .chat-message {
   margin: 15px 0;
-  word-wrap: break-word;
 }
 
 .bot {
   color: #293239;
   font-weight: bold; 
-}
-
-.user {
-  color: black;
-  font-weight: bold;
-}
-
-#status-text {
-  margin-top: 10px;
-  margin-bottom: -10px; 
-  color: #b3b3b3;
 }

@@ -346,22 +346,24 @@ class Chatbox(APIView):
             'description': bot_object.description,
             'category': bot_object.category,
             'tags': bot_object.tags,
+            'is_active': bot_object.is_active,
+            'is_archived': bot_object.is_archived
         }
-
-        css = [
-            'http://localhost:8000/static/css/chatbox.css'
-        ]
 
         js = [
             'http://localhost:8000/static/js/chatbox.js',
         ]
-
-        with open('templates/bots/chatbox.html', 'r') as f:
-            chat_html = f.read()
-
-        html = [
-            chat_html
-        ]
+        html, css = [], []
+        if bot['is_active'] and not bot['is_archived']:
+            css.append('http://localhost:8000/static/css/chatbox.css')
+            with open('templates/bots/chatbox.html', 'r') as f:
+                chat_html = f.read()
+                html.append(chat_html)
+        else:
+            css.append('http://localhost:8000/static/css/chatbox2.css')
+            with open('templates/bots/chatbox2.html', 'r') as f:
+                chat_html = f.read()
+                html.append(chat_html)
 
         data = {'bot': bot, 'css': css, 'js': js, 'html': html}
         return Response(data)
