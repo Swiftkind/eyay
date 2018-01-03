@@ -351,16 +351,16 @@ class Chatbox(APIView):
         }
 
         js = [
-            'http://localhost:8000/static/js/chatbox.js',
+            'https://chateyay.localtunnel.me/static/js/chatbox.js',
         ]
         html, css = [], []
         if bot['is_active'] and not bot['is_archived']:
-            css.append('http://localhost:8000/static/css/chatbox.css')
+            css.append('https://chateyay.localtunnel.me/static/css/chatbox.css')
             with open('templates/bots/chatbox.html', 'r') as f:
                 chat_html = f.read()
                 html.append(chat_html)
         else:
-            css.append('http://localhost:8000/static/css/chatbox2.css')
+            css.append('https://chateyay.localtunnel.me/static/css/chatbox2.css')
             with open('templates/bots/chatbox2.html', 'r') as f:
                 chat_html = f.read()
                 html.append(chat_html)

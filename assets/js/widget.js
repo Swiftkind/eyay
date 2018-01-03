@@ -21,10 +21,10 @@ function main() {
     var botDiv = $('<div/>', {id: 'botChatbox'}).appendTo('body');;
     if (botDiv != null && !isNaN(bot)) {
       botDiv = $(botDiv);
-      var chatURL = 'http://localhost:8000/api/bots/'+bot+'/chat/';
-      var knowledgeURL = 'http://localhost:8000/api/bots/'+bot+'/knowledges/';
+      var chatURL = 'https://chateyay.localtunnel.me/api/bots/'+bot+'/chat/';
+      var knowledgeURL = 'https://chateyay.localtunnel.me/api/bots/'+bot+'/knowledges/';
       var teachReply = "I'll have to ask my creator's approval for this.";
-      var html_url = "http://localhost:8000/api/bots/get_chatbox/";
+      var html_url = "https://chateyay.localtunnel.me/api/bots/get_chatbox/";
       var data_message = params.getAttribute('data-message');
       var starting_message =  data_message == null ? "Hello" : data_message;
 
@@ -54,40 +54,47 @@ function main() {
             js_link.appendTo('body');
           }
 
-          var $chatlog = $('#chat-history');
-          var $input = $('#id_message');
-          var $botName = $('#bot-name');
-          var $statusText = $('#status-text');
-          var chat_log = document.getElementById('chat-history');
+          var $chatlog = $('#botpro-chat-history');
+          var $input = $('#botpro_id_message');
+          var $botName = $('#botpro-bot-name');
+          var $statusText = $('#botpro-status-text');
+          var chat_log = document.getElementById('botpro-chat-history');
           var needAnswer = false;
           var prev = '';
 
           function createRow(sender, text) {
             var new_chat_name = document.createElement('h5');
-            if (sender == bot.name) new_chat_name.setAttribute("class", "bot");
-            else new_chat_name.setAttribute("class", "user");
+            if (sender == bot.name) new_chat_name.setAttribute("class", "botpro-h5 botpro-bot");
+            else new_chat_name.setAttribute("class", "botpro-h5 botpro-user");
             new_chat_name.innerHTML = sender;
 
             var new_chat_message = document.createElement('p');
+            new_chat_message.setAttribute("class", "botpro-p");
             new_chat_message.innerHTML = text;
 
             var new_chat = document.createElement('div');
-            new_chat.setAttribute("class", "chat-message-content clearfix");
+            new_chat.setAttribute("class", "botpro-chat-message-content botpro-clearfix");
             new_chat.appendChild(new_chat_name);
             new_chat.appendChild(new_chat_message);
 
             var new_row = document.createElement('div');
-            new_row.setAttribute("class", "chat-message clearfix");
+            new_row.setAttribute("class", "botpro-chat-message botpro-clearfix");
             new_row.appendChild(new_chat);
             chat_log.appendChild(new_row);
+
+            var message_divider = document.createElement('hr');
+            message_divider.setAttribute("class", "botpro-hr");
+            chat_log.appendChild(message_divider);
             chat_log.scrollTop = chat_log.scrollHeight;
           }
 
           $botName.html(bot.name);
-          createRow(bot.name, starting_message);
           if (!bot.is_active || bot.is_archived) createRow(bot.name, "I'm sorry, but my creator" +
             " has set me to an inactive state :(");
-          else $statusText.html(bot.name + ' is active');
+          else {
+            $statusText.html(bot.name + ' is active');
+            createRow(bot.name, starting_message);
+          }
 
           function submitInput() {
             var inputData = {
@@ -125,15 +132,10 @@ function main() {
                   data = JSON.parse(data);
                   if (data.confidence == null && data.response == "I don't know a good answer for that," +
                    " teach me by entering the proper answer to the question/query above.") {
-                    createRow(bot.name, '' + data.response);
                     prev = inputData.message;
                     needAnswer = true;
-                  } else if(data.confidence == null && data.response == 'I have a pending query with the' +
-                  ' same question you asked that needs to be accepted by my creator.'){
-                    createRow(bot.name, '' + data.response);
-                  } else {
-                    createRow(bot.name, '' + data.response + ' (' +data.confidence+ '%)');
                   }
+                  createRow(bot.name, '' + data.response);
                 },
                 error: function(errorMessages) {
                   errorMessages = JSON.parse(errorMessages.responseJSON);
