@@ -7,15 +7,21 @@
 <div class="collections">
   <div class="container">
     <div class="row">
+      <br>
+      {% for message in messages %}
+      <div class="montserrat alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="alert">{{ message }}</div>
+      {% endfor %}
       <div class="col-xs-12 col-md-10">
         <div class="col-md-offset-1">
           <h1 class="title">Collections</h1>
           <p class="total-bots">{{ total_bots }} total bots</p>
         </div>
       </div>
+      {% if user.is_authenticated %}
       <div class="col-xs-12 col-md-2">
         <a href="{% url 'addbot' %}" class="btn btn-primary new_bot-btn ">New Bot</a>
       </div>
+      {% endif %}
     </div>
     <div class="row">
       <div class="col-xs-12 col-md-10">
@@ -69,27 +75,30 @@
     <nav class="navbar">
      <ul class="nav navbar-nav right-nav ">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle filters-custom " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">All Time &nbsp;<span class="caret"></span></a>
+        <a href="#" class="dropdown-toggle filters-custom " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% if created == "week" %}Last Week{% elif created == "month" %}Last Month{% else %}All Time{% endif %} &nbsp;<span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="#">Last Week</a></li>
-          <li><a href="#">Last Month</a></li>
-          <li><a href="#">All Time</a></li>
+          <li><a href="/?status={{ status }}&created=week">Last Week</a></li>
+          <li><a href="/?status={{ status }}&created=month">Last Month</a></li>
+          <li><a href="/?status={{ status }}">All Time</a></li>
         </ul>
       </li>
-      <li><a href="#" class="filters-custom"><div class="active-circle"></div> &nbsp;Active</a></li>
-      <li><a href="#" class="filters-custom "><div class="inactive-circle "></div> &nbsp;Inactive</a></li>
+      <li><a href="{% if status == 'active' %}/?created={{ created }}{% else %}/?status=active&created={{ created }}{% endif %}" class="filters-custom {% if status == 'active' %}selected-status{% endif %}"><div class="active-circle"></div> &nbsp;Active</a></li>
+      <li><a href="{% if status == 'inactive' %}/?created={{ created }}{% else %}/?status=inactive&created={{ created }}{% endif %}" class="filters-custom {% if status == 'inactive' %}selected-status{% endif %}"><div class="inactive-circle "></div> &nbsp;Inactive</a></li>
     </ul>
+    
+    {% if is_paginated %}
     <ul class="pagination-style pagination nav navbar-nav navbar-right ">
-      {% if bots.has_previous %}
-      <li><a href="/?page=first" class="font-color">First</a></li>
-      <li><a href="/?page={{ bots.previous_page_number }}">{{ bots.previous_page_number }}</a></li>
+      {% if page_obj.has_previous %}
+      <li><a href="/?page=1&status={{ status }}&created={{ created }}" class="font-color">First</a></li>
+      <li><a href="/?page={{ page_obj.previous_page_number }}&status={{ status }}&created={{ created }}">{{ page_obj.previous_page_number }}</a></li>
       {% endif %}
-      <li class="active"><a>{{ page }}</a></li>
-      {% if bots.has_next %}
-      <li><a href="/?page={{ bots.next_page_number }}">{{ bots.next_page_number }}</a></li>
-      <li><a href="/?page=last">Last</a></li>
+      <li class="active"><a>{{ page_obj.number }}</a></li>
+      {% if page_obj.has_next %}
+      <li><a href="/?page={{ page_obj.next_page_number }}&status={{ status }}&created={{ created }}">{{ page_obj.next_page_number }}</a></li>
+      <li><a href="/?page={{ paginator.num_pages }}&status={{ status }}&created={{ created }}">Last</a></li>
       {% endif %}
     </ul>
+    {% endif %}
   </nav>
 </div>
 
@@ -99,25 +108,13 @@
     <div class="col-xs-12 col-md-6">
       <div class="panel panel-body bot-card">
         <div>
-          <a href="{% url 'botdetails' bot.id %}" class="bot-name">{{ bot.name }}</a> 
+          <a href="{% url 'chat' bot.id %}" class="bot-name">{{ bot.name }}</a> 
           <div class="status-option-container">            
-            <input {% if bot.is_active %}checked{% endif %} type="checkbox" data-toggle="toggle" data-on="active" data-off="inactive" data-onstyle="success" data-offstyle="danger" data-width="70px"data-size="mini">
-            <div class="btn-group">
-              <span class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class=" glyphicon glyphicon-option-horizontal "></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="{% url 'chat' bot.id %}">Chat</a></li>
-                  <li><a href="{% url 'botdetails' bot.id %}">Edit</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#" onclick="archiveBot({{ bot.id }});return false;">Archive</a></li>
-                </ul>
-              </span>
-            </div>
+            <div class="btn status-btn {% if bot.is_active %}btn-success">Active{% else %}btn-danger">Inactive{% endif %}</div> 
           </div>
         </div>
         <div class="panel-body bot-desc">
-          <p>{{ bot.description|truncatechars:200 }}</p>
+          <p class="montserrat">{{ bot.description|truncatechars:200 }}</p>
           <span class="date-created-footer">Date Created</span>
           <div><strong>{{ bot.created|date:"m/d/Y" }}</strong></div>
         </div>   

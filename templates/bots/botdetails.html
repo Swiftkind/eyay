@@ -7,6 +7,11 @@
   <div class="container">
 
     <div class="row">
+      <br>
+      {% for message in messages %}
+      <div class="montserrat alert alert-success" role="alert">{{ message }}</div>
+      {% endfor %}
+      
       <div class="col-xs-12 col-md-9">
         <div class="col-md-offset-1">
 
@@ -68,7 +73,7 @@
       </div>
 
       <div class="col-xs-12 col-md-2">
-        <a href="{% url 'chat-with-bot' bot.id %}" class="btn btn-primary new_bot-btn ">Start Chat</a>
+        <a href="{% url 'chat' bot.id %}" class="btn btn-primary new_bot-btn ">Start Chat</a>
       </div>
     </div>
 
@@ -88,7 +93,8 @@
         <div class="col-md-offset-1">
           <div class="header-divider">
             <p class="bot-description ">
-              {{ bot.description }}
+              {{ bot.description }}<br><br>
+              <small>Tags: {{ bot.tags }}</small>
             </p> 
           </div>
         </div>
@@ -118,13 +124,19 @@
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <div class="container">
-                  <ul class="pagination navbar-right pagination-style">
-                    <li><a href="#">First</a></li>
-                    <li><a href="#">5</a></li>
-                    <li class="active"><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">Last</a></li>
+                  {% if suggestions.has_other_pages %}
+                  <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+                    {% if suggestions.has_previous %}
+                    <li><a href="?page={{ page_a }}&p=1" class="font-color">First</a></li>
+                    <li><a href="?page={{ page_a }}&p={{ suggestions.previous_page_number }}">{{ suggestions.previous_page_number }}</a></li>
+                    {% endif %}
+                    <li class="active"><a>{{ suggestions.number }}</a></li>
+                    {% if suggestions.has_next %}
+                    <li><a href="?page={{ page_a }}&p={{ suggestions.next_page_number }}">{{ suggestions.next_page_number }}</a></li>
+                    <li><a href="?page={{ page_a }}&p={{ num_pages_b }}">Last</a></li>
+                    {% endif %}
                   </ul>
+                  {% endif %}
                 </div>
               </li>
             </ul>
@@ -141,8 +153,8 @@
             </div>
           </div>
 
-          {% if suggested_knowledge %}
-          {% for knowledge in suggested_knowledge %}
+          {% if suggestions %}
+          {% for knowledge in suggestions %}
           <div class="col-md-11 col-xs-10">
             <div class="col-md-offset-1 col-xs-offset-1">
               <div class="row knowledge-container">
@@ -157,7 +169,7 @@
                           
                         </div>
                         <div class=" col-md-7 col-xs-7">
-                          <span class="question"> {{ knowledge.statement }}</span> 
+                          <span class="question"> {{ knowledge.statement|capfirst }}</span> 
                         </div>
                         <div class="col-md-4 col-xs-2">
                           <span class="option-position">
@@ -167,9 +179,9 @@
                             <a href="#" onclick="deleteKnowledge({{ knowledge.id }})" class="btn btn-danger btn-sm">
                               <span class="glyphicon glyphicon-remove"></span>
                             </a>
-                            <a data-toggle="modal" data-target = "#editsuggested" class="btn btn-default btn-sm"> Edit </a>
+                            <a data-toggle="modal" data-target = "#editsuggested{{ knowledge.id }}" class="btn btn-default btn-sm"> Edit </a>
                             <span class="glyphicon glyphicon glyphicon-plus" data-toggle="collapse" data-target="#suggestedK"></span>
-                            <div id="editsuggested" class="modal fade" role="dialog">
+                            <div id="editsuggested{{ knowledge.id }}" class="modal fade" role="dialog">
                               <div class="modal-dialog"> 
                                 <!-- Edit Suggested Query Modal content-->
                                 <div class="modal-content">
@@ -258,13 +270,19 @@
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                 <div class="container">
-                  <ul class="pagination navbar-right pagination-style">
-                    <li><a href="#">First</a></li>
-                    <li><a href="#">5</a></li>
-                    <li class="active"><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">Last</a></li>
+                  {% if is_paginated %}
+                  <ul class="pagination-style pagination nav navbar-nav navbar-right ">
+                    {% if page_obj.has_previous %}
+                    <li><a href="?page=1&p={{ page_b }}" class="font-color">First</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}&p={{ page_b }}">{{ page_obj.previous_page_number }}</a></li>
+                    {% endif %}
+                    <li class="active"><a>{{ page_obj.number }}</a></li>
+                    {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}&p={{ page_b }}">{{ page_obj.next_page_number }}</a></li>
+                    <li><a href="?page={{ paginator.num_pages }}&p={{ page_b }}">Last</a></li>
+                    {% endif %}
                   </ul>
+                  {% endif %}
                 </div>
               </li>
             </ul>
@@ -334,7 +352,7 @@
                             <img src="{% static 'images/bots/question-bg.png' %}" srcset="{% static 'images/bots/question-bg@2x.png' %} 2x, {% static 'images/bots/question-bg@3x.png' %} 3x" class="question-img" id="question-bgImg{{ knowledge.id }}"/>
                           </div>
                           <div class=" col-md-9 col-xs-7">
-                            <span class="question"> {{ knowledge.statement }}</span> 
+                            <span class="question"> {{ knowledge.statement|capfirst }}</span> 
                           </div>
                           <div class="col-md-2 col-xs-2">
                             <span class="option-position">
@@ -347,7 +365,7 @@
                                     <li  class="nav-item dropdown">
                                       <a href="#response"
                                       class="dropdown-item"
-                                      data-toggle="modal" data-target="#editquery"> Edit</a>
+                                      data-toggle="modal" data-target="#editquery{{ knowledge.id }}"> Edit</a>
                                       <a href="#" class="dropdown-item" onclick="deleteKnowledge({{ knowledge.id }}); return false;">Delete</a>
                                     </li>
                                   </ul>
@@ -362,7 +380,7 @@
                       </div>
                     </div>
                     <!-- Edit Query Modal -->
-                    <div class="modal fade" id="editquery" role="dialog">
+                    <div class="modal fade" id="editquery{{ knowledge.id }}" role="dialog">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -429,7 +447,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="prompt">
-                      This bot knows nothing. Please Initialize by adding queries.
+                      This bot knows nothing. Please initialize by adding queries.
                     </h3>
                   </div>
                 </div>
@@ -494,8 +512,12 @@
           alert('Bot was successfully edited!');
           window.location = '/bots/' + botId;
         },
-        error : function(xhr,errmsg,err) {
-          console.log(xhr.status + ": " + xhr.responseText);
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+              errorMessage += errorMessages[err][0] == 'This field is required.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+          alert(errorMessage);
         }
       });
     });
@@ -518,7 +540,7 @@
         answer: "" + answer,
         bot: botId
       };
-      console.log(params);
+
       $.ajax({
         type : 'PUT',
         url : editknowledgeUrl,
@@ -531,8 +553,12 @@
           alert('Query was successfully Edited!');
           window.location = '/bots/' + botId;
         },
-        error : function(xhr,errmsg,err) {
-          console.log(xhr.status + ": " + xhr.responseText);
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+              errorMessage += errorMessages[err][0] == 'This field may not be blank.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+          alert(errorMessage);
         }
       });
     });
@@ -559,8 +585,12 @@
           alert('Knowledge was successfully added!');
           window.location = '/bots/{{ bot.id }}';
         },
-        error : function(xhr,errmsg,err) {
-          console.log(xhr.status + ": ");
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+              errorMessage += errorMessages[err][0] == 'This field is required.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+          alert(errorMessage);
         }
       });
     }
@@ -583,8 +613,12 @@
           alert('Knowledge was successfully Deleted!');
           window.location = '/bots/{{ bot.id }}';
         },
-        error : function(xhr,errmsg,err) {
-          console.log(xhr.status + ": ");
+        error : function(errorMessages) {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+              errorMessage += errorMessages[err][0] == 'This field is required.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+          alert(errorMessage);
         }
       });
     }
@@ -597,7 +631,7 @@
   var botId = '{{ bot.id }}'
 
   $("#addknowledgeForm").on('submit', function(e) {
-    e.preventDefault();`
+    e.preventDefault();
 
     var question = $('#question').val();
     var answer = $('#answer').val();
@@ -620,8 +654,16 @@
         alert('Query was added Successfully!');
         window.location = '/bots/' + botId;
       },
-      error : function(xhr,errmsg,err) {
-        console.log(xhr.status + ": " + xhr.responseText);
+      error : function(errorMessages) {
+        if (errorMessages.status == 500) {
+          alert('Something went wrong, perhaps the bot already knows the answer to this statement/question');
+        } else {
+          errorMessages = JSON.parse(errorMessages.responseText);
+          var errorMessage = "";
+          for (var err in errorMessages) 
+              errorMessage += errorMessages[err][0] == 'This field is required.' ? ('The ' +err+ ' field is required!\n') : (errorMessages[err]+'\n');            
+          alert(errorMessage);
+        }
       }
     });
   });

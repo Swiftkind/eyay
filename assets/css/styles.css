@@ -480,9 +480,6 @@ input[type=text] {
   background-color: #f3f4f5;
   border: 1px solid #efeff7; }
 
-.prompt-position {
-  margin: 60px 0; }
-
 .position-icons {
   margin-right: 50px; }
 
@@ -518,11 +515,14 @@ input[type=text] {
   top: -11px;
   max-height: 145px; }
 
-.submit-message {
-  margin-top: 18px; }
-
 .selected-status {
   background-color: #e4e4eb;
   border: solid 1px #dedee2; }
+
+.montserrat {
+  font-family: "Montserrat-Regular"; }
+
+.error-text {
+  color: red; }
 
 /*# sourceMappingURL=styles.css.map */

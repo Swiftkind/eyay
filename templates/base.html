@@ -13,7 +13,6 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-toggle.min.css' %}">
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.css">
-    <script src="https://use.fontawesome.com/67b0e9c8df.js"></script>
   </head>
 
   <body>
@@ -33,9 +32,12 @@
           {% if user.is_authenticated %}
           <li class="dropdown">
             <a class="dropdown-toggle user-panel" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %} <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Profile</a></li>
-              <li><a href="{% url 'account_change_password' %}">Settings</a></li>
+            <ul class="dropdown-menu montserrat">
+              <li><a href="{% url 'bots' %}">My bots</a></li>
+              <li><a href="{% url 'bots_archive' %}">Archived bots</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="{% url 'user_profile' %}">My profile</a></li>
+              <li><a href="{% url 'account_change_password' %}">Change password</a></li>
               <li><a href="{% url 'socialaccount_connections' %}">Social accounts</a></li>
               <li role="separator" class="divider"></li>
               <li><a href="{% url 'account_logout' %}">Logout</a></li>
@@ -49,8 +51,25 @@
       </div>
     </div>
   </nav>
-
+  
     {% block header %}
+    <div class="collections">
+      <div class="container">
+        <div class="row">
+          <br>
+          {% for message in messages %}
+          <div class="montserrat alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}" role="alert">{{ message }}</div>
+          {% endfor %}
+
+          <div class="col-xs-12 col-md-10">
+            <div class="col-md-offset-1">
+              <h1 class="title">{% block main_text %}{% endblock %}</h1>
+              <p class="total-bots">{% block sub_text %}{% endblock %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     {% endblock %}
 
     {% block content %}
@@ -58,9 +77,7 @@
     <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap-toggle.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/js-cookie.js' %}"></script>
     <script src="//cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
-
     {% block js %}{% endblock %}
   </body>
 </html>
