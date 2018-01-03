@@ -2,18 +2,9 @@
 {% load account socialaccount %}
 {% block title %}{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %}{% endblock %}
 
-{% block header %}
-<div class="collections">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-md-10">
-        <h1 class="title">{% if user.get_full_name %}{{ user.get_full_name }}{% else %}(No name set yet){% endif %}</h1>
-        <p class="total-bots">It's been {{ user.date_joined|timesince }} since you joined us!</p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+{% block main_text %}{% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.email }}{% endif %}{% endblock %}
+
+{% block sub_text %}It's been {{ user.date_joined|timesince }} since you joined us!{% endblock %}
 
 {% block content %}
 <div class="content">
@@ -58,17 +49,18 @@
         params_length--;
       }
     } 
-    var csrftoken = Cookies.get('csrftoken');
+
     if (params_length > 0) {
       $.ajax({
-        type: "PUT",
+        type: "PATCH",
         url: '/api/auth/user/',
         beforeSend: function(xhr, settings) {
-          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
         },
         data: params, 
         success: function(data) {
-            alert('Sucessfully sent message'); 
+            alert('Sucessfully updated profile');
+            window.location = '/accounts/profile';
         },
         error: function(errorMessages) {            
             errorMessages = JSON.parse(errorMessages.responseText);

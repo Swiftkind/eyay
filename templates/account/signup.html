@@ -1,18 +1,9 @@
 {% extends '../base.html' %}
 {% block title %}Sign Up{% endblock %}
 
-{% block header %}
-<div class="collections">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-md-10">
-        <h1 class="title">Sign Up</h1>
-        <p class="total-bots">Already have an account? Then please <a href="{% url 'account_login' %}">sign in</a></p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+{% block main_text %}Sign Up{% endblock %}
+
+{% block sub_text %}Already have an account? Then please <a href="{% url 'account_login' %}">sign in</a>{% endblock %}
 
 {% block content %}
 <div class="content">
